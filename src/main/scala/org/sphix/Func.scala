@@ -1,16 +1,19 @@
 package org.sphix
 
 import javafx.{ beans => jfxb }
+import javafx.beans.value.{ ObservableValue => OV }
 
-abstract class Func[A](dep: jfxb.Observable, deps: jfxb.Observable*) extends LazyVal[A] {
+abstract class Func[A](dependencies: jfxb.Observable*) extends LazyVal[A] {
 
-  val dependencies = dep +: deps
-  
   dependencies foreach (_ addListener lazyListener)
 
   def dispose() {
     dependencies foreach (_ removeListener lazyListener)
   }
+}
+
+class Func1[B, A](d1: OV[B], f: B => A) extends Func[A](d1) {
+  def compute = f(d1.getValue)
 }
 
 object Func {

@@ -1,22 +1,32 @@
 package org.sphix
 
-import org.scalatest.FeatureSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest._
 import javafx.beans.value.ChangeListener
 import javafx.beans.property.SimpleIntegerProperty
 
-class ValTest extends FeatureSpec with ShouldMatchers {
+class ValTest extends FeatureSpec with Matchers {
 
   type OV[A] = javafx.beans.value.ObservableValue[A]
 
   feature("factory") {
 
-    scenario("simple") {
+    scenario("apply") {
 
       val v = Val(3)
 
       v() should equal(3)
-    }    
+    }
+
+    scenario("toVal") {
+
+      import Val._
+
+      val v = 3.toVal
+
+      v shouldBe a[Val[_]]
+      v() shouldEqual 3
+    }
+
   }
 
   //	Using av Var to the features of Val
@@ -155,63 +165,63 @@ class ValTest extends FeatureSpec with ShouldMatchers {
       v() = 5
 
       w() should equal(6)
-      
+
     }
 
     scenario("bug hunt") {
-      
+
       val v = Var("foo")
-      
-      val w: Val[Option[String]] = v map(x => Some(x))
-      
+
+      val w: Val[Option[String]] = v map (x => Some(x))
+
       w()
-      
+
       w() should equal(Some("foo"))
     }
-    
+
   }
-  
+
   feature("flatten") {
-    
+
     scenario("single") {
-      
+
       val v = Var(3)
-      
+
       val w = Var(100)
-      
+
       val x = Var(v)
-      
+
       val z = x.flatten
-      
+
       z() should equal(3)
-      
+
       v() = 4
-      
+
       z() should equal(4)
-      
+
       x() = w
-      
+
       z() should equal(100)
-      
+
       w() = 101
-      
+
       z() should equal(101)
     }
   }
-  
+
   feature("filter") {
-    
+
     scenario("single") {
-      
+
       val v = Var(3)
-      
-      val w = v filter(_ < 10)
-      
+
+      val w = v filter (_ < 10)
+
       w() should equal(Some(3))
-      
+
       v() = 15
-      
-      w() should equal(None)            
+
+      w() should equal(None)
     }
   }
 
@@ -231,13 +241,51 @@ class ValTest extends FeatureSpec with ShouldMatchers {
 
       value should equal(4)
     }
-    
+
     scenario("tuple") {
-      
+
       val sip1, sip2 = new SimpleIntegerProperty(3)
-      
-      val prod = (sip1, sip2) map(_.intValue + _.intValue)
+
+      val prod = (sip1, sip2) map (_.intValue + _.intValue)
     }
+  }
+
+  feature("pack") {
+
+    scenario("tuple 2") {
+
+      val a = Var(3)
+      val b = Var(4)
+
+      val packed = (a, b).pack
+
+      packed() should equal((3, 4))
+
+      a() = 5
+
+      packed() should equal((5, 4))
+    }
+  }
+
+  feature("experimental") {
+
+    val a = Val(2)
+
+    val b = Var(4)
+
+    //    b <== a.!
+    //    
+    //    b <== -a
+    //    
+    //    b <== a.jfx
+    //    
+    //    b <== a.safe
+    //    
+    //    b <== a.~
+    //    
+    //    b := 3
+    //    
+    //    b <:== a
   }
 
 }

@@ -7,22 +7,17 @@ import java.util.concurrent.TimeUnit
 import javafx.beans.InvalidationListener
 import java.util.concurrent.ThreadFactory
 
-class DelayedVal[A](source: Val[A], millis: Long) extends FirableVal[A] {
+class DelayedVal[A](source: Val[A], delayTime0: Long, timeUnit: TimeUnit) extends LazyVal[A] {
 
-  private var value: A = source()
-
-  def getValue = value
-
-  private var sourceValue: A = _
-
-  def currentValue = value
+  val delayTime = Var(delayTime0)
+  
+  def compute = source()
   
   val THREAD_FACTORY = new ThreadFactory {
-    def newThread(run: Runnable) = {
-      val th = new Thread(run);
-      //                    th.setUncaughtExceptionHandler(UNCAUGHT_HANDLER);
-      th.setPriority(Thread.MIN_PRIORITY);
-      th.setDaemon(true);
+    def newThread(runnable: Runnable) = {
+      val th = new Thread(runnable)
+      th setPriority Thread.MIN_PRIORITY
+      th setDaemon true
       th
     }
   }
@@ -30,20 +25,23 @@ class DelayedVal[A](source: Val[A], millis: Long) extends FirableVal[A] {
   val executor = new ScheduledThreadPoolExecutor(1, THREAD_FACTORY)
   var future: Option[Future[_]] = None
 
-  val propagator = new Runnable {
+  val invalidator = new Runnable {
     def run() {
-      Platform runLater new Runnable {
-        def run() {
-          value = sourceValue
-          fire()
-        }
+      runLater {
+        invalidate(source)
       }
     }
   }
 
-  source onValue { v =>
-    sourceValue = v
+  (source, delayTime) observe {
     future foreach (_ cancel false)
-    future = Some(executor schedule (propagator, millis, TimeUnit.MILLISECONDS))
+    future = Some(executor schedule (invalidator, delayTime(), timeUnit))
+  }
+
+  //	so that we can override it in tests
+  def runLater[U](r: => U) {
+    Platform runLater new Runnable {
+      def run() { r }
+    }
   }
 }

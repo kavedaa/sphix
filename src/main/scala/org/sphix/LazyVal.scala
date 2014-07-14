@@ -10,14 +10,14 @@ trait LazyVal[A] extends FirableVal[A] {
 
   protected def currentValue = value
   
-  protected def invalidate() {
+  protected def invalidate(o: javafx.beans.Observable) {
     valid = false
     fire()
   }
 
   protected lazy val lazyListener = new InvalidationListener {
     def invalidated(o: javafx.beans.Observable) {
-      invalidate()
+      invalidate(o)
     }
   }
 

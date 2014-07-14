@@ -1,11 +1,12 @@
 package org.sphix
 
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest._
 
-class ObservingValTest extends FunSuite with ShouldMatchers {
+class ObservingValTest extends FunSuite with Matchers {
 
     test("observing inner observables") {
+      
+      import Val._
       
       case class Person(name: Var[String], age: Var[Int]) {
         def fields = (name, age)
@@ -13,7 +14,7 @@ class ObservingValTest extends FunSuite with ShouldMatchers {
       
       val john = Person(Var("John"), Var(30))
       
-      val v = Val(john, (p: Person) => p.fields)		//	don't know why we need type annotation here
+      val v = john observing(_.fields)
       
       var count = 0
       

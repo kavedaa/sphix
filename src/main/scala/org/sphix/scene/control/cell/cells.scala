@@ -13,6 +13,8 @@ import java.text.NumberFormat
 import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
+import org.sphix.util._
+import java.text.DateFormat
 
 trait TextCell[T] extends Cell[T] {
 
@@ -49,6 +51,8 @@ trait ImageCell[T] extends Cell[T] {
   def image(t: T): Option[Image]
 
   private lazy val imageView = new ImageView
+  
+  setAlignment(Pos.CENTER)
 
   override def updateItem(item: T, empty: Boolean) {
     super.updateItem(item, empty)
@@ -72,10 +76,16 @@ trait BooleanImageCell extends ImageCell[Boolean] {
   def trueImage: Option[Image]
   def falseImage: Option[Image]
 
-  setAlignment(Pos.CENTER)
-
   def image(item: Boolean) = if (item) trueImage else falseImage
 }
+
+trait EditableBooleanImageCell extends BooleanImageCell {
+  
+  setOnMouseClicked { () =>
+    commitEdit(!getItem)
+  }
+}
+
 
 trait TooltipCell[T] extends Cell[T] {
 
@@ -88,36 +98,38 @@ trait TooltipCell[T] extends Cell[T] {
   override def updateItem(item: T, empty: Boolean) {
     super.updateItem(item, empty)
     if (!empty) {
-      label setText text(item)
+      label setText (text(item) replaceAll("[\n\r]", " "))
       tooltip setText tooltip(item)
       setGraphic(label)
     }
     else {
       setGraphic(null)
     }
-  }
+  }  
 }
 
-trait AlignedCell[T] extends TextCell[T] {
-  def position: Pos
-  setAlignment(position)
+trait AlignmentCell[T] extends TextCell[T] {
+  def pos: Pos
+  setAlignment(pos)
 }
 
-trait NumericCell[T] extends AlignedCell[T] {
+trait NumericCell[T] extends AlignmentCell[T] {
   def nf: NumberFormat
   def position = Pos.CENTER_RIGHT
   def text(t: T) = nf format t
 }
-//
-//class StaticImageTableCell[S, T](val imageFileName: String, val show: T => Boolean)(implicit val cls: Class[_]) extends TableCell[S, T] with StaticImageCell[T]
+
+trait DateCell extends TextCell[java.util.Date] {
+  def df: DateFormat
+  def text(date: java.util.Date) = df format date 
+}
+
+trait DateOptionCell extends TextCell[Option[java.util.Date]] {
+  def df: DateFormat
+  def text(date: Option[java.util.Date]) = date map df.format getOrElse "" 
+}
 
 
-//	Factories
-
-//object TextTableCell {
-//  def apply[S, T](text: T => String) = new Callback[TableColumn[S, T], TableCell[S, T]] {
-//    def call(c: TableColumn[S, T]) = new TextTableCell(text)
-//  }
 //}
 //
 //object AlignedListCell {

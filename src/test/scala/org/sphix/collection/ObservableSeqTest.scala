@@ -11,7 +11,7 @@ class ObservableSeqTest extends FunSuite with ShouldMatchers {
 
   test("factory") {
 
-    ObservableSeq() should equal(Nil)
+    ObservableSeq[Nothing]() should equal(Nil)
 
     ObservableSeq('A, 'B) should equal(ObservableSeq('A, 'B))
   }
@@ -151,4 +151,12 @@ class ObservableSeqTest extends FunSuite with ShouldMatchers {
     } should produce[UnsupportedOperationException]
   }
 
+  test("distinctBy") {
+    
+    case class Person(name: String, age: Int)
+    
+    val os = ObservableSeq(Person("John", 34), Person("Tom", 54), Person("John", 23))
+    
+    os distinctBy(_.name) should equal(Seq(Person("John", 34), Person("Tom", 54)))
+  }
 }

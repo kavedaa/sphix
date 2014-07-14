@@ -1,15 +1,21 @@
 # sphix
 
-*sphix* is a library that simplifies JavaFX development with Scala. Its goal is to "Scalaify" JavaFX as much as is needed to create a good development experience, focusing on the most-used features and patterns, without creating a complete Scala-layer on top of it.
+*sphix* is a library that simplifies JavaFX development with Scala, by addding
+idiomatic Scala syntax to commonly used JavaFX features such as properties and collections.
+It is not a complete Scala wrapper on top of JavaFX like e.g. ScalaFX. 
 
-*sphix* is very much a work in progress, developing with the needs of the author. Currently it sports the following features:
+*sphix* is very much a work in progress, and the API should not be considered stable.
 
-* Reimplemented and enhanced observables, a.k.a. "properties and bindings".
+Currently it has the following features:
+
+* Reimplemented and enhanced observable values, a.k.a. "properties and bindings".
 * Wrappers for and enhancements to observable collections.
 * Composable cell factories.
 * Various other utilities.
 
 ## Quick overview
+
+### Observable values
 
 ```scala
   val foo = Val(3)	//	implements javafx.beans.value.ObservableValue
@@ -42,51 +48,10 @@
 
 ```
 
-
-
-## Observables, a.k.a. properties and bindings
-
-Without too much ado, let's what you can to with these in *sphix*. We'll start somewhere in the middle, with `Var`, which is *sphix*'s implementation of JavaFX's `Property` interface:
+### Observable collections
 
 ```scala
-  val name = Var("Tom")
+val xs = ObservableSeq(1, 2, 3)
+
+val size = xs(_.size)		//	size is a Val[Int]
 ```
-
-Really simple, yes? You get and set it with Scala's standard apply/update syntax:
-
-```scala
-  println(name())
-  
-  name() = "John"
-```
-
-Ok, that's trivial. Let's observe it:
-
-```scala
-  name observe { println("name has changed!") }
-```
-
-A bit easier than adding a listener. There are variations of this:
-
-```scala
-  name onValue { v => println(v) }
-
-  //	Or simply
-  name onValue println
-  
-  name onChange { (o, oldName, newName) => println(s"name changed from $oldName to $newName") }
-```
-
-You can of course bind it as well (borrowing symbolic operator from ScalaFX, thanks!):
-
-```scala
-  val otherName = Var[String]()
-
-  otherName <== name
-```
-
-
-
-
-
-

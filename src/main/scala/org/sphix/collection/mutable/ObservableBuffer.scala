@@ -28,33 +28,34 @@ class ObservableBuffer[A](protected val observableList: ObservableList[A])
 
   val bindListener = new ListChangeListener[A] {
     def onChanged(change: javafx.collections.ListChangeListener.Change[_ <: A]) {
+      println("observable buffer bind listener called")
       //	TODO: this is a temporary workaround for the horrible bugs in JFX
-          observableList setAll change.getList
-      
-//      while (change.next()) {
-//        if (change.wasAdded) {
-//          observableList addAll(change.getFrom, change.getAddedSubList)
-//        }
-//        if (change.wasRemoved) {
-//          //	workaround, possible bug i OList
-//          change.getFrom to change.getTo foreach { n =>
-//            observableList remove n
-//          }
-//        }
-//        if (change.wasPermutated) {
-//          //	pragmatic solution
-//          observableList setAll change.getList
-//        }
-//        if (change.wasReplaced) {
-//          // doesn't seem to be called
-//        }
-//        if (change.wasUpdated) {
-//          //	not sure if best solution...note that this prob won't be called anyway
-//          change.getFrom to change.getTo foreach { n =>
-//            observableList set (n, change.getList get n)
-//          }
-//        }
-//      }
+      observableList setAll change.getList
+
+      //      while (change.next()) {
+      //        if (change.wasAdded) {
+      //          observableList addAll(change.getFrom, change.getAddedSubList)
+      //        }
+      //        if (change.wasRemoved) {
+      //          //	workaround, possible bug i OList
+      //          change.getFrom to change.getTo foreach { n =>
+      //            observableList remove n
+      //          }
+      //        }
+      //        if (change.wasPermutated) {
+      //          //	pragmatic solution
+      //          observableList setAll change.getList
+      //        }
+      //        if (change.wasReplaced) {
+      //          // doesn't seem to be called
+      //        }
+      //        if (change.wasUpdated) {
+      //          //	not sure if best solution...note that this prob won't be called anyway
+      //          change.getFrom to change.getTo foreach { n =>
+      //            observableList set (n, change.getList get n)
+      //          }
+      //        }
+      //      }
     }
   }
 
@@ -67,7 +68,7 @@ class ObservableBuffer[A](protected val observableList: ObservableList[A])
 
   def unbind() {
     boundTo map { ob => ob removeListener bindListener }
-    boundTo = None	  
+    boundTo = None
   }
 
   def isBound = boundTo.isDefined
@@ -181,8 +182,7 @@ object ObservableBuffer extends SeqFactory[ObservableBuffer] {
     new ObservableBuffer[A](FXCollections.observableArrayList[A](callback))
   }
 
-
- implicit def cbf[A] = new GenericCanBuildFrom[A] {
+  implicit def cbf[A] = new GenericCanBuildFrom[A] {
     override def apply() = newBuilder[A]
   }
 

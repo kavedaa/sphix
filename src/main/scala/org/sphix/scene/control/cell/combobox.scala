@@ -17,66 +17,79 @@ import org.sphix.collection.ObservableSeq
 import org.sphix.util.RightConverter
 import org.sphix.util._
 import org.sphix.Val._
+import javafx.scene.input._
+import javafx.scene.control.Cell
 
-class ComboBoxTableCell[S, T](items: ObservableSeq[T], converter: RightConverter[T, String]) extends TableCell[S, T] {
+class CellProxy[T] extends Cell[T] {
+  def proxyUpdateItem(item: T, empty: Boolean) {
+    updateItem(item, empty)
+  }
+}
+
+class ComboBoxTableCell[S, T](items: ObservableSeq[T], createCell: => CellProxy[T]) extends TableCell[S, T] { cell =>
 
   this.getStyleClass().add("combo-box-table-cell");
 
+  private lazy val contentCell = createCell
+
   private lazy val comboBox = new ComboBox(items) {
+
     setMaxWidth(java.lang.Double.MAX_VALUE);
 
-    getSelectionModel.selectedItemProperty onValue println
-    
-    setOnHiding { () =>
-      println("hiding")
-    }
-
-    setOnHidden { () =>
-      println("hidden")
-      if (isEditing) {
-        commitEdit(getSelectionModel.getSelectedItem)
+    getSelectionModel.selectedItemProperty onValue { v =>
+      Option(v) foreach { item =>
+        commitEdit(item)
       }
     }
+
+    setOnKeyPressed(new EventHandler[KeyEvent] {
+      def handle(t: KeyEvent) {
+        if (new KeyCodeCombination(KeyCode.ESCAPE) `match` t) {
+          cancelEdit()
+        }
+      }
+    })
+
   }
 
   override def startEdit() {
     if (isEditable && getTableView.isEditable && getTableColumn.isEditable) {
-
-      comboBox.getSelectionModel select getItem
+      
+      comboBox.getSelectionModel select getItem //	important that this comes before super.startEdit()
 
       super.startEdit()
+
       setText(null)
       setGraphic(comboBox)
-      
-     comboBox requestFocus()
-      comboBox show()
-    }
 
+      //      comboBox show ()	//	this is wanted for good UX but triggers weird bug 
+      comboBox requestFocus ()
+    }
   }
 
   override def cancelEdit() {
     super.cancelEdit()
-    setText(converter convert getItem)
+    setText(getItem.toString)
     setGraphic(null)
   }
 
   override def updateItem(item: T, empty: Boolean) {
     super.updateItem(item, empty)
-    if (isEmpty) {
-      setText(null)
-      setGraphic(null)
-    }
-    else {
+    if (!empty) {
       if (isEditing) {
-        println("updateItem isEditing")
-//        comboBox.getSelectionModel select getItem
+        comboBox.getSelectionModel select getItem
         setText(null)
         setGraphic(comboBox)
       }
       else {
-        setText(converter convert getItem)
+        //        contentCell proxyUpdateItem(item, false)
+        setText(item.toString)
         setGraphic(null)
       }
+    }
+    else {
+      setText(null)
+      setGraphic(null)
     }
   }
 }

@@ -6,25 +6,23 @@ import javafx.beans.{ Observable => JFXO }
 
 trait Observable extends JFXO {
 
-  def onInvalidate[U](f: JFXO => U): Observer = {
-    val listener = new InvalidationListener {
-      def invalidated(o: JFXO) { f(o) }
-    }
-    addListener(listener)
-    new InvalidationObserver(Seq(this), listener)
+  def onInvalidate[U](f: JFXO => U): InvalidationObserver[U] = {
+    val observer = new InvalidationObserver(Seq(this), f)
+    addListener(observer)
+    observer
   }
 
   def onInvalidateOnce[U](f: JFXO => U): Observer = {
-    val listener = new InvalidationListener {
+    val observer = new InvalidationObserverLike(Seq(this)) {
       def invalidated(o: JFXO) { f(o); removeListener(this) }
     }
-    addListener(listener)
-    new InvalidationObserver(Seq(this), listener)
+    addListener(observer)
+    observer
   }
 
-  def observe[U](f: => U): Observer = onInvalidate((o: JFXO) => f)
+  def observe[U](f: => U) = onInvalidate((o: JFXO) => f)
 
-  def observeOnce[U](f: => U): Observer = onInvalidateOnce((o: JFXO) => f)
+  def observeOnce[U](f: => U) = onInvalidateOnce((o: JFXO) => f)
 
   def apply[A, B](f: this.type => A)(implicit applier: Applier[A, this.type, B]): B =
     applier apply (this, f)
@@ -55,25 +53,23 @@ private[sphix] trait PluralObservable extends JFXO {
     observables foreach { _ removeListener listener }
   }
 
-  def onInvalidate[U](f: JFXO => U): Observer = {
-    val listener = new InvalidationListener {
-      def invalidated(o: JFXO) { f(o) }
-    }
-    addListener(listener)
-    new InvalidationObserver(observables, listener)
+  def onInvalidate[U](f: JFXO => U): InvalidationObserver[U] = {
+    val observer = new InvalidationObserver(observables, f)
+    addListener(observer)
+    observer
   }
 
   def onInvalidateOnce[U](f: JFXO => U): Observer = {
-    val listener = new InvalidationListener {
+    val observer = new InvalidationObserverLike(observables) {
       def invalidated(o: JFXO) { f(o); removeListener(this) }
     }
-    addListener(listener)
-    new InvalidationObserver(observables, listener)
+    addListener(observer)
+    observer
   }
 
-  def observe[U](f: => U): Observer = onInvalidate((o: JFXO) => f)
+  def observe[U](f: => U) = onInvalidate((o: JFXO) => f)
 
-  def observeOnce[U](f: => U): Observer = onInvalidateOnce((o: JFXO) => f)
+  def observeOnce[U](f: => U) = onInvalidateOnce((o: JFXO) => f)
 }
 
 private[sphix] trait TupleObservable extends PluralObservable {

@@ -4,37 +4,38 @@ import scala.collection.mutable.ListBuffer
 import javafx.beans.InvalidationListener
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.{ ObservableValue => OV }
+import java.util.concurrent.TimeUnit
 
 abstract class Val[A] extends Observable with OV[A] { v =>
 
   def apply() = getValue
 
-  def onChange[U](f: (OV[_ <: A], A, A) => U): Observer = {
-    val listener = new ChangeListener[A] {
-      def changed(ov: OV[_ <: A], oldValue: A, newValue: A) {
-        f(ov, oldValue, newValue)
-      }
-    }
-    addListener(listener)
-    new ChangeObserver(Seq(this), listener)
+  def onChange[U](f: (OV[_ <: A], A, A) => U): ChangeObserver[A, U] = {
+    val observer = new ChangeObserver[A, U](Seq(this), f)
+    addListener(observer)
+    observer
   }
 
   def onChangeOnce[U](f: (OV[_ <: A], A, A) => U): Observer = {
-    val listener = new ChangeListener[A] {
+    val observer = new ChangeObserverLike[A](Seq(this)) {
       def changed(ov: OV[_ <: A], oldValue: A, newValue: A) {
         f(ov, oldValue, newValue)
         removeListener(this)
       }
     }
-    addListener(listener)
-    new ChangeObserver(Seq(this), listener)
+    addListener(observer)
+    observer
   }
 
-  def onValue[U](f: A => U): Observer = onChange { (ov, oldValue, newValue) => f(newValue) }
+  def onValue[U](f: A => U) = onChange { (ov, oldValue, newValue) => f(newValue) }
 
-  def onValueOnce[U](f: A => U): Observer = onChangeOnce { (ov, oldValue, newValue) => f(newValue) }
+  def onValueOnce[U](f: A => U) = onChangeOnce { (ov, oldValue, newValue) => f(newValue) }
 
-  def map[B](f: A => B): Func[B] = new Func[B](this) { def compute = f(v()) }
+  def on[U](value: A)(f: => U) = onValue { v => if (v == value) f }
+  
+  def onOnce[U](value: A)(f: => U) = onValueOnce { v => if (v == value) f }
+
+  def map[B](f: A => B): Func[B] = new Func1(this, f)
 
   def flatten[B](implicit ev: A <:< OV[B]): Val[B] = new Flattener[B](this map ev)
 
@@ -42,10 +43,20 @@ abstract class Val[A] extends Observable with OV[A] { v =>
     def compute = if (p(v())) Some(v()) else None
   }
 
-  def delay(millis: Long) = new DelayedVal(this, millis)
+  def delay(millis: Long) = new DelayedVal(this, millis, TimeUnit.MILLISECONDS)
 
   def as[B](implicit f: A => B) = map[B](f)
-
+  
+//  def ! = this
+//  
+//  def unary_- = this
+//  
+//  def jfx = this
+//  
+//  def safe = this
+//  
+//  def ~ = this
+//  
   override def toString = s"Val(${getValue})"
 }
 
@@ -78,38 +89,51 @@ object Val {
 
   //	Not a good idea as it gets triggered way too easily given the apply method on Val...  
   //  implicit def fromValue[A](v: A): Val[A] = Val(v) 
-
+ 
+  //	do this instead
+  
+  //	please note that there are is some unintended wordplay here...
+  implicit class Extender[A](val a: A) extends AnyVal {
+    def toVal: Val[A] = new ConstantVal(a)
+    def observing(f: A => javafx.beans.Observable): Val[A] = new ObservingVal(a, f)
+  }
+  
   implicit class JfxObservableValuePimper[A](val jfx: OV[A]) extends ValProxy[A]
 
-  implicit class ValTuple2[A1, A2](val t: (OV[A1], OV[A2])) extends TupleObservable {
+  implicit class OVTuple2[A1, A2](val t: (OV[A1], OV[A2])) extends TupleObservable {
 
-    def onValue[U](f: (A1, A2) => U): Observer = onInvalidate(o => f(t._1.getValue, t._2.getValue))
+    def onValue[U](f: (A1, A2) => U) = onInvalidate(o => f(t._1.getValue, t._2.getValue))
 
-    def onValueOnce[U](f: (A1, A2) => U): Observer = onInvalidateOnce(o => f(t._1.getValue, t._2.getValue))
+    def onValueOnce[U](f: (A1, A2) => U) = onInvalidateOnce(o => f(t._1.getValue, t._2.getValue))
 
     def map[B](f: (A1, A2) => B): Func[B] = new Func[B](t._1, t._2) {
       def compute = f(t._1(), t._2())
     }
+    
+    //	not sure if this is actually useful for anything
+    def pack = map((_, _))
   }
 
-  implicit class ValTuple3[A1, A2, A3](val t: (Val[A1], Val[A2], Val[A3])) extends TupleObservable {
+  implicit class OVTuple3[A1, A2, A3](val t: (OV[A1], OV[A2], OV[A3])) extends TupleObservable {
     
-    def onValue[U](f: (A1, A2, A3) => U): Observer = onInvalidate(o => f(t._1.getValue, t._2.getValue, t._3.getValue))
+    def onValue[U](f: (A1, A2, A3) => U) = onInvalidate(o => f(t._1.getValue, t._2.getValue, t._3.getValue))
 
-    def onValueOnce[U](f: (A1, A2, A3) => U): Observer = onInvalidateOnce(o => f(t._1.getValue, t._2.getValue, t._3.getValue))
+    def onValueOnce[U](f: (A1, A2, A3) => U) = onInvalidateOnce(o => f(t._1.getValue, t._2.getValue, t._3.getValue))
     
     def map[B](f: (A1, A2, A3) => B): Func[B] = new Func[B](t._1, t._2, t._3) {
       def compute = f(t._1(), t._2(), t._3())
     }
+    
+    def pack = map((_, _, _))    
   }
 
-  implicit class ValTuple4[A1, A2, A3, A4](val t: (Val[A1], Val[A2], Val[A3], Val[A4])) {
+  implicit class OVTuple4[A1, A2, A3, A4](val t: (OV[A1], OV[A2], OV[A3], OV[A4])) {
     def map[B](f: (A1, A2, A3, A4) => B): Func[B] = new Func[B](t._1, t._2, t._3, t._4) {
       def compute = f(t._1(), t._2(), t._3(), t._4())
     }
   }
 
-  implicit class ValTuple5[A1, A2, A3, A4, A5](val t: (Val[A1], Val[A2], Val[A3], Val[A4], Val[A5])) {
+  implicit class OVTuple5[A1, A2, A3, A4, A5](val t: (OV[A1], OV[A2], OV[A3], OV[A4], OV[A5])) {
     def map[B](f: (A1, A2, A3, A4, A5) => B): Func[B] = new Func[B](t._1, t._2, t._3, t._4, t._5) {
       def compute = f(t._1(), t._2(), t._3(), t._4(), t._5())
     }

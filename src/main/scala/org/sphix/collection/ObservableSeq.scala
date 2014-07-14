@@ -11,10 +11,29 @@ import org.sphix.collection.transformation._
 import scala.collection.generic.SeqFactory
 import scala.collection.generic.GenericTraversableTemplate
 import scala.collection.generic.GenericCompanion
+import scala.collection.SeqLike
+
+trait ObservableSeqLike[A, Repr] extends SeqLike[A, Repr] {
+
+  def distinctBy[B](f: A => B): Repr = {
+    val b = newBuilder
+    val seen = collection.mutable.HashSet[B]()
+    for (x <- this) {
+      val y = f(x)
+      if (!seen(y)) {
+        b += x
+        seen += y
+      }
+    }
+    b.result
+  }
+
+}
 
 trait ObservableSeq[A]
   extends collection.Seq[A]
   with GenericTraversableTemplate[A, ObservableSeq]
+  with ObservableSeqLike[A, ObservableSeq[A]]
   with Observable {
 
   override def companion: GenericCompanion[ObservableSeq] = ObservableSeq

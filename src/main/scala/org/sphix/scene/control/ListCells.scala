@@ -4,7 +4,7 @@ import javafx.scene.control.ListCell
 import javafx.scene.image.Image
 import javafx.scene.Node
 
-trait ListCells[T] { this: ListView[T] =>
+trait ListCells[T] { 
 
   trait TextCell extends ListCell[T] with cell.TextCell[T]
 
@@ -29,6 +29,8 @@ trait ListCells[T] { this: ListView[T] =>
       def image(item: T) = image0(item)
     }
   }
+  
+  trait AlignmentCell extends ListCell[T] with cell.AlignmentCell[T]  
 
   trait BooleanImageCell extends ListCell[Boolean] with cell.BooleanImageCell
 

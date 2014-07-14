@@ -1,7 +1,6 @@
 package org.sphix.collection.mutable
 
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest._
 import javafx.beans.InvalidationListener
 import javafx.beans.Observable
 import org.sphix.collection.Change
@@ -10,7 +9,7 @@ import javafx.collections.FXCollections
 import org.sphix._
 import org.sphix.collection.SeqFunc
 
-class ObservableBufferTest extends FunSuite with ShouldMatchers {
+class ObservableBufferTest extends FunSuite with Matchers {
 
   test("factory methods") {
 

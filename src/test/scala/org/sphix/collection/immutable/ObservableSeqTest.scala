@@ -1,13 +1,12 @@
 package org.sphix.collection.immutable
 
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest._
 
-class ObservableSeqTest extends FunSuite with ShouldMatchers {
+class ObservableSeqTest extends FunSuite with Matchers {
   
   test("factory") {
     
-    ObservableSeq() should equal(Nil)
+    ObservableSeq[Nothing]() shouldEqual Nil
        
     ObservableSeq('A, 'B) should equal(ObservableSeq('A, 'B))    
   }

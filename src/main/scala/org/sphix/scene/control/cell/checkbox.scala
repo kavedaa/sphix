@@ -7,29 +7,39 @@ import javafx.util.Callback
 import javafx.scene.control.TableColumn
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Pos
+import org.sphix.Var
+import Var._
 
-class CheckBoxTableCell[S, T](f: S => Property[java.lang.Boolean]) extends TableCell[S, T] {
+trait CheckBoxTableCell[S, T] extends TableCell[S, T] {
 
+  def f(s: S): Property[Boolean]
+  
   lazy val checkbox = new CheckBox
+  lazy val checked = checkbox.selectedProperty
   
   setAlignment(Pos.CENTER)
 
-  var checked: Property[java.lang.Boolean] = new SimpleBooleanProperty
+  var data = Var[java.lang.Boolean](false)
 
   override def updateItem(cellItem: T, empty: Boolean) {
     super.updateItem(cellItem, empty)
     if (!empty) {
       setGraphic(checkbox)
-      checkbox.selectedProperty unbindBidirectional checked
-      val item = getTableView.getItems get getIndex
-      checked = f(item)
-      checkbox.selectedProperty bindBidirectional checked
+      checked unbindBidirectional data 
+      val rowItem = getTableView.getItems get getIndex
+      data = f(rowItem).convert[java.lang.Boolean]
+      checked bindBidirectional data
+    }
+    else {
+      setGraphic(null)
     }
   }
 }
 
 object CheckBoxTableCell {
-  def apply[S, T](f: S => Property[java.lang.Boolean]) = new Callback[TableColumn[S, T], TableCell[S, T]] {
-    def call(c: TableColumn[S, T]) = new CheckBoxTableCell(f)
+  def apply[S, T](f0: S => Property[Boolean]) = new Callback[TableColumn[S, T], TableCell[S, T]] {
+    def call(c: TableColumn[S, T]) = new CheckBoxTableCell[S, T] {
+      def f(s: S) = f0(s)
+    }
   }
 }

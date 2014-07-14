@@ -14,10 +14,23 @@ object DefaultConverter {
 }
 
 
+class StringOptionConverter extends RightConverter[Option[String], String] {
+  def convert(a: Option[String]) = a map(_.toString) getOrElse ""
+  def deconvert(b: String) = Some(if (b.isEmpty) None else Some(b)) 
+}
+
+object StringOptionConverter {
+  def apply() = new StringOptionConverter
+}
 
 object IntConverter extends RightConverter[Int, String] {
   def convert(a: Int) = a.toString
   def deconvert(b: String) = Try(b.toInt).toOption
+}
+
+object IntOptionConverter extends RightConverter[Option[Int], String] {
+  def convert(a: Option[Int]) = a map(_.toString) getOrElse ""
+  def deconvert(b: String) = if (b.isEmpty) Some(None) else Try(Some(b.toInt)).toOption
 }
 
 class DoubleConverter extends RightConverter[Double, String] {
@@ -55,8 +68,20 @@ trait DateConverter extends RightConverter[java.util.Date, String] {
   def deconvert(b: String) = Try(dateFormat parse b).toOption
 }
 
+object DateConverter {
+  def apply(df: DateFormat) = new DateConverter {
+    def dateFormat = df
+  }
+}
+
 trait DateOptionConverter extends RightConverter[Option[java.util.Date], String] {
   def dateFormat: DateFormat
   def convert(a: Option[java.util.Date]) = a map dateFormat.format getOrElse ""
   def deconvert(b: String) = if (b.isEmpty) Some(None) else Try(Some(dateFormat parse b)).toOption
+}
+
+object DateOptionConverter {
+  def apply(df: DateFormat) = new DateOptionConverter {
+    def dateFormat = df
+  }
 }

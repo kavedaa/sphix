@@ -15,7 +15,7 @@ class Flattener[A](outer: ObservableValue[ObservableValue[A]]) extends LazyVal[A
       //	this could probably be optimized by not reading outer before at computation, e.g. proper laziness
       inner = outer.getValue
       inner addListener lazyListener
-      invalidate()
+      invalidate(outer)
     }
   }
 

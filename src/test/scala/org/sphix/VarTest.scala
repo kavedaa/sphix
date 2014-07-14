@@ -1,128 +1,278 @@
 package org.sphix
 
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest._
 import javafx.beans.InvalidationListener
 import javafx.beans.value.ChangeListener
 import javafx.beans.property.SimpleObjectProperty
+import org.sphix.util.FullConverter
+import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.ReadOnlyStringWrapper
 
-class VarTest extends FunSuite with ShouldMatchers {
+class VarTest extends FeatureSpec with Matchers {
 
-  test("factory") {
+  feature("factory") {
 
-    val p = Var(3)
+    scenario("simple") {
 
-    p() should equal(3)
+      val p = Var(3)
+
+      p() should equal(3)
+    }
   }
 
-  test("set when not bound") {
+  feature("set value") {
 
-    val p = Var(3)
+    scenario("when not bound") {
 
-    p() = 4
+      val p = Var(3)
 
-    p() should equal(4)
+      p() = 4
+
+      p() should equal(4)
+    }
+
+    scenario("when bound") {
+
+      val p = Var(3)
+      val q = Var(4)
+
+      p <== q
+
+      evaluating { p() = 5 } should produce[RuntimeException]
+
+      p() should equal(4)
+    }
+
+    scenario("when same value - nothing should fire") {
+
+      var count = 0
+
+      val p = Var(3)
+
+      p observe { count += 1 }
+
+      p() = 4
+
+      count should equal(1)
+
+      p() = 4
+
+      count should equal(1)
+    }
   }
 
-  test("set same value - nothing should be fired") {
+  feature("binding") {
 
-    var count = 0
+    scenario("bind") {
 
-    val p = Var(3)
+      val p = Var(3)
+      val q = Var(4)
 
-    p observe { count += 1 }
+      p <== q
 
-    p() = 4
+      p() should equal(4)
+      p.isBound should be(true)
 
-    count should equal(1)
+      q() = 5
 
-    p() = 4
+      p() should equal(5)
+    }
 
-    count should equal(1)
-  }
+    scenario("unbind") {
 
-  test("bind") {
+      val p = Var(3)
+      val q = Var(4)
 
-    val p = Var(3)
-    val q = Var(4)
+      p <== q
 
-    p <== q
+      p() should equal(4)
 
-    p() should equal(4)
-    p.isBound should be(true)
+      p unbind ()
 
-    q() = 5
+      q() = 5
 
-    p() should equal(5)
-  }
+      p() shouldEqual 4
+    }
 
-  test("unbind") {
+    scenario("chained bind") {
 
-    val p = Var(3)
-    val q = Var(4)
+      val p1 = Var(3)
+      val p2 = Var(4)
+      val p3 = Var(5)
 
-    p <== q
+      p1 <== p2
 
-    //	TODO!!
-  }
+      p1() should equal(4)
 
-  test("set when bound") {
+      p2 <== p3
 
-    val p = Var(3)
-    val q = Var(4)
+      p2() should equal(5)
+      p1() should equal(5)
 
-    p <== q
+      p3() = 6
 
-    evaluating { p() = 5 } should produce[RuntimeException]
+      p2() should equal(6)
+      p1() should equal(6)
+    }
 
-    p() should equal(4)
-  }
-
-  test("chained bind") {
-
-    val p1 = Var(3)
-    val p2 = Var(4)
-    val p3 = Var(5)
-
-    p1 <== p2
-
-    p1() should equal(4)
-
-    p2 <== p3
-
-    p2() should equal(5)
-    p1() should equal(5)
-
-    p3() = 6
-
-    p2() should equal(6)
-    p1() should equal(6)
-  }
-
-  test("conversion from JFX property") {
-
-    val p = new SimpleObjectProperty[Int](3)
-    val q = Var(4)
-
-    import Var._
+    scenario("bind to JFX property") {
+      
+      val p = Var("Hello")
+      val q = new SimpleStringProperty("Goodbye")
+      
+      p <== q
+      
+      p() shouldEqual "Goodbye"
+      
+      q setValue "Hello again"
+      
+      p() shouldEqual "Hello again"
+    }
     
-    p <== q
+    scenario("bind to read-only JFX property") {
+      
+      val p = Var("Hello")
+      val q = new ReadOnlyStringWrapper("Goodbye")
+      val q1 = q.getReadOnlyProperty
+      
+      p <== q1
+      
+      p() shouldEqual "Goodbye"
+      
+      q setValue "Hello again"
+      
+      p() shouldEqual "Hello again"
+      
+    }
+    
+    scenario("pimp JFX property") {
 
-    p() should equal(4)
+      val p = new SimpleObjectProperty[Int](3)
+      val q = Var(4)
 
-    q() = 5
+      import Var._
 
-    p() should equal(5)
+      p <== q
+
+      p() should equal(4)
+
+      q() = 5
+
+      p() should equal(5)
+    }
   }
+  
+  feature("bidirectional binding") {
+    
+    scenario("bind - without converter") {
+      
+      val p = Var(3)
+      val q = Var(4)
+      
+      p <==> q
+      
+      p() shouldEqual 4
+      
+      p() = 5
+      
+      q() shouldEqual 5
+      
+      q() = 6
+      
+      p() shouldEqual 6
+    }
 
-  test("variance") {
+    scenario("unbind - without converter") {
+      
+      val p = Var(3)
+      val q = Var(4)
+      
+      p <==> q
+      
+      p() shouldEqual 4
+      
+      p <=!=> q
+      
+      p() = 5
+      
+      q() shouldEqual 4
+    }
+    
+    scenario("bind - with converter") {
+      
+      val p = Var(3)
+      val q = Var(3)
+      
+      import Var._
+      
+      p <=~ FullConverter[Int, Int](_ + 2, _ - 2) ~=> q
+      
+      p() shouldEqual 1
+      
+      p() = 2
+      
+      q() shouldEqual 4
+      
+      q() = 5
+      
+      p() shouldEqual 3
+    }
 
-    val v1 = Var[Option[Int]](None)
+    scenario("unbind - with converter") {
+      
+      val p = Var(3)
+      val q = Var(3)
+      
+      import Var._
+      
+      p <=~ FullConverter[Int, Int](_ + 2, _ - 2) ~=> q
+      
+      p() shouldEqual 1
+      
+      p <=!=> q
+      
+      q() = 2
+      
+      p() shouldEqual 1
+    }
+    
+    
+    scenario("conversion between primitive types") {
+      
+      val p = Var[Boolean](true)
+      val q = new SimpleBooleanProperty(false)
+      
+      p <=~=> q
+      
+      p() shouldEqual false
+      
+      p() = true
+      
+      q.get shouldEqual true
+      
+      q set false
+      
+      p() shouldEqual false
+    }
+    
+  }
+  
+  
+  
 
-    // must ascribe super type for binding (et al?) to work
-    val v2: Val[Option[Int]] = Val(Some(3))
+  feature("misc") {
 
-    v1 <== v2
+    scenario("variance") {
+
+      val v1 = Var[Option[Int]](None)
+
+      // must ascribe super type for binding (et al?) to work
+      val v2: Val[Option[Int]] = Val(Some(3))
+
+      v1 <== v2
+    }
+
   }
 
 }

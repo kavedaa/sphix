@@ -60,7 +60,7 @@ class FilteredSeq[A](source: ObservableSeq[A], predicate: ObservableValue[A => B
         refilter() //	take the easy road
 
       case Change.Updated(start, end) =>
-      // todo
+        refilter()
     }
   }
 

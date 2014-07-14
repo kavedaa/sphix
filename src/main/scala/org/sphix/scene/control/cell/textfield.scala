@@ -72,6 +72,7 @@ trait TextFieldTableCell[S, T] extends TableCell[S, T] {
   }
 
   override def commitEdit(value: T) {
+    println(isEditing)
     super.commitEdit(value)
     getTableView.getFocusModel.focusedItemProperty removeListener focusListener
   }
