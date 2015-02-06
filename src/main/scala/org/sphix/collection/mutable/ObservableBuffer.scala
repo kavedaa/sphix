@@ -106,16 +106,17 @@ class ObservableBuffer[A](protected val observableList: ObservableList[A])
     observableList remove n
   }
 
-  def update(n: Int, newElem: A) {
+  def update(n: Int, newElem: A) = {
     assertNotBound()
     observableList set (n, newElem)
   }
 
-  def update(elems: Traversable[A]) {
+  def update(elems: Traversable[A]) = {
     assertNotBound()
     observableList setAll (JavaConversions asJavaCollection elems.toIterable)
   }
 
+  
   //	Overrides to avoid element-for-element changes from default implementation
 
   override def ++=(xs: TraversableOnce[A]) = {

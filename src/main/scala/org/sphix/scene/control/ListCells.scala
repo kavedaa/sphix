@@ -30,8 +30,6 @@ trait ListCells[T] {
     }
   }
   
-  trait AlignmentCell extends ListCell[T] with cell.AlignmentCell[T]  
-
   trait BooleanImageCell extends ListCell[Boolean] with cell.BooleanImageCell
 
   object BooleanImageCell {
@@ -41,4 +39,9 @@ trait ListCells[T] {
     }
   }
 
+//  trait NumericCell extends ListCell[T] with cell.NumericCell[T]  
+//
+//  trait NumericOptionCell extends ListCell[T] with cell.NumericOptionCell[T]  
+
+  
 }

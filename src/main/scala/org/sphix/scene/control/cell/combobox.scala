@@ -19,6 +19,8 @@ import org.sphix.util._
 import org.sphix.Val._
 import javafx.scene.input._
 import javafx.scene.control.Cell
+import org.sphix.scene.control.ComboBoxUtils
+import javafx.scene.control.ListCell
 
 class CellProxy[T] extends Cell[T] {
   def proxyUpdateItem(item: T, empty: Boolean) {
@@ -26,13 +28,16 @@ class CellProxy[T] extends Cell[T] {
   }
 }
 
-class ComboBoxTableCell[S, T](items: ObservableSeq[T], createCell: => CellProxy[T]) extends TableCell[S, T] { cell =>
+class ComboBoxTableCell[S, T](items: ObservableSeq[T], f: T => String) extends TableCell[S, T] { cell =>
 
   this.getStyleClass().add("combo-box-table-cell");
 
-  private lazy val contentCell = createCell
+  //  private lazy val contentCell = createCell
 
-  private lazy val comboBox = new ComboBox(items) {
+  private lazy val comboBox = new ComboBox[T](items) with ComboBoxUtils[T] {
+
+    setCell(TextCell(f))
+    setButtonCell(TextCell(f))
 
     setMaxWidth(java.lang.Double.MAX_VALUE);
 
@@ -54,7 +59,7 @@ class ComboBoxTableCell[S, T](items: ObservableSeq[T], createCell: => CellProxy[
 
   override def startEdit() {
     if (isEditable && getTableView.isEditable && getTableColumn.isEditable) {
-      
+
       comboBox.getSelectionModel select getItem //	important that this comes before super.startEdit()
 
       super.startEdit()
@@ -69,7 +74,7 @@ class ComboBoxTableCell[S, T](items: ObservableSeq[T], createCell: => CellProxy[
 
   override def cancelEdit() {
     super.cancelEdit()
-    setText(getItem.toString)
+    setText(f(getItem))
     setGraphic(null)
   }
 
@@ -82,8 +87,7 @@ class ComboBoxTableCell[S, T](items: ObservableSeq[T], createCell: => CellProxy[
         setGraphic(comboBox)
       }
       else {
-        //        contentCell proxyUpdateItem(item, false)
-        setText(item.toString)
+        setText(f(getItem))
         setGraphic(null)
       }
     }

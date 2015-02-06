@@ -106,4 +106,5 @@ trait ObservableImplicits {
   implicit class SeqObservable(val observables: Seq[JFXO]) extends PluralObservable
 }
 
+object Observable extends ObservableImplicits
 

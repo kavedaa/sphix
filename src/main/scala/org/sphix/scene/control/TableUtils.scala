@@ -7,10 +7,10 @@ import javafx.scene.control.TableView
 import javafx.scene.control.TableColumn
 import javafx.scene.control.TableCell
 
-trait TableUtils[S] { this: TableView[S] =>
+trait TableUtils[S] extends TableCells[S] { this: TableView[S] =>
 
   class Column[T](prefWidth: Optional[Double])(text: String, f: S => ObservableValue[T])
-    extends TableColumn[S, T](text) with TableCells[S, T] {
+    extends TableColumn[S, T](text) with ColumnCells[S, T] {
 
     def this(text: String, f: S => ObservableValue[T]) =
       this(Absent)(text, f)

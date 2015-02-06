@@ -9,12 +9,14 @@ import javafx.scene.control.TableColumn
 import javafx.scene.Node
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import java.text.NumberFormat
 import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
 import org.sphix.util._
 import java.text.DateFormat
+import java.text.DecimalFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 trait TextCell[T] extends Cell[T] {
 
@@ -46,12 +48,13 @@ trait GraphicCell[T] extends Cell[T] {
   }
 }
 
+
 trait ImageCell[T] extends Cell[T] {
 
   def image(t: T): Option[Image]
 
   private lazy val imageView = new ImageView
-  
+
   setAlignment(Pos.CENTER)
 
   override def updateItem(item: T, empty: Boolean) {
@@ -80,12 +83,11 @@ trait BooleanImageCell extends ImageCell[Boolean] {
 }
 
 trait EditableBooleanImageCell extends BooleanImageCell {
-  
+
   setOnMouseClicked { () =>
     commitEdit(!getItem)
   }
 }
-
 
 trait TooltipCell[T] extends Cell[T] {
 
@@ -98,39 +100,48 @@ trait TooltipCell[T] extends Cell[T] {
   override def updateItem(item: T, empty: Boolean) {
     super.updateItem(item, empty)
     if (!empty) {
-      label setText (text(item) replaceAll("[\n\r]", " "))
+      label setText (text(item) replaceAll ("[\n\r]", " "))
       tooltip setText tooltip(item)
       setGraphic(label)
     }
     else {
       setGraphic(null)
     }
-  }  
+  }
 }
 
-trait AlignmentCell[T] extends TextCell[T] {
-  def pos: Pos
-  setAlignment(pos)
+trait BigDecimalCell extends TextCell[BigDecimal] {
+  def dcf: DecimalFormat
+  def text(x: BigDecimal) = dcf format x
+  setAlignment(Pos.CENTER_RIGHT)
 }
 
-trait NumericCell[T] extends AlignmentCell[T] {
-  def nf: NumberFormat
-  def position = Pos.CENTER_RIGHT
-  def text(t: T) = nf format t
+trait BigDecimalOptionCell extends TextCell[Option[BigDecimal]] {
+  def dcf: DecimalFormat
+  def text(x: Option[BigDecimal]) = x map dcf.format getOrElse ""
+  setAlignment(Pos.CENTER_RIGHT)
 }
 
 trait DateCell extends TextCell[java.util.Date] {
   def df: DateFormat
-  def text(date: java.util.Date) = df format date 
+  def text(date: java.util.Date) = df format date
 }
 
 trait DateOptionCell extends TextCell[Option[java.util.Date]] {
   def df: DateFormat
-  def text(date: Option[java.util.Date]) = date map df.format getOrElse "" 
+  def text(date: Option[java.util.Date]) = date map df.format getOrElse ""
 }
 
+trait LocalDateTimeCell extends TextCell[LocalDateTime] {
+  def formatter: DateTimeFormatter
+  def text(ldt: LocalDateTime) = formatter format ldt
+}
 
-//}
+trait LocalDateTimeOptionCell extends TextCell[Option[LocalDateTime]] {
+  def formatter: DateTimeFormatter
+  def text(ldt: Option[LocalDateTime]) = ldt map formatter.format getOrElse ""
+}
+
 //
 //object AlignedListCell {
 //  def apply[T](pos: Pos) = new Callback[ListView[T], ListCell[T]] {

@@ -21,12 +21,12 @@ trait TextFieldTableCell[S, T] extends TableCell[S, T] {
 
   def converter: RightConverter[T, String]
 
-  lazy val focusListener = new InvalidationListener {
-    def invalidated(o: Observable) {
-      println("focus change")
-      commitEdit(converter deconvert textField.getText getOrElse getItem)
-    }
-  }
+//  lazy val focusListener = new InvalidationListener {
+//    def invalidated(o: Observable) {
+//      println("focus change")
+//      commitEdit(converter deconvert textField.getText getOrElse getItem)
+//    }
+//  }
 
   lazy val textField = new TextField {
 
@@ -36,19 +36,19 @@ trait TextFieldTableCell[S, T] extends TableCell[S, T] {
           case t if new KeyCodeCombination(KeyCode.ENTER) `match` t =>
             converter deconvert getText map commitEdit
 
-          case t if new KeyCodeCombination(KeyCode.DOWN) `match` t =>
-            converter deconvert getText map { value =>
-              commitEdit(value)
-              getTableView.getFocusModel focusNext ()
-              //              getTableView edit (getTableView.getFocusModel.getFocusedIndex, getTableColumn)
-            }
-
-          case t if new KeyCodeCombination(KeyCode.UP) `match` t =>
-            converter deconvert getText map { value =>
-              commitEdit(value)
-              getTableView.getFocusModel focusPrevious ()
-              //              getTableView edit (getTableView.getFocusModel.getFocusedIndex, getTableColumn)
-            }
+//          case t if new KeyCodeCombination(KeyCode.DOWN) `match` t =>
+//            converter deconvert getText map { value =>
+//              commitEdit(value)
+//              getTableView.getFocusModel focusNext ()
+//              //              getTableView edit (getTableView.getFocusModel.getFocusedIndex, getTableColumn)
+//            }
+//
+//          case t if new KeyCodeCombination(KeyCode.UP) `match` t =>
+//            converter deconvert getText map { value =>
+//              commitEdit(value)
+//              getTableView.getFocusModel focusPrevious ()
+//              //              getTableView edit (getTableView.getFocusModel.getFocusedIndex, getTableColumn)
+//            }
 
           case t if new KeyCodeCombination(KeyCode.ESCAPE) `match` t => cancelEdit()
 
@@ -62,7 +62,7 @@ trait TextFieldTableCell[S, T] extends TableCell[S, T] {
     if (isEditable && getTableView.isEditable) {
       super.startEdit()
       textField setText (converter convert getItem)
-      getTableView.getFocusModel.focusedItemProperty addListener focusListener
+//      getTableView.getFocusModel.focusedItemProperty addListener focusListener
 
       setText(null)
       setGraphic(textField)
@@ -72,13 +72,15 @@ trait TextFieldTableCell[S, T] extends TableCell[S, T] {
   }
 
   override def commitEdit(value: T) {
-    println(isEditing)
     super.commitEdit(value)
-    getTableView.getFocusModel.focusedItemProperty removeListener focusListener
+//    getTableView.getFocusModel.focusedItemProperty removeListener focusListener
+    setGraphic(null)
+    //	this must be here otherwise the table loses focus on commit, don't know why
+    getTableView.requestFocus()
   }
 
   override def cancelEdit() {
-    getTableView.getFocusModel.focusedItemProperty removeListener focusListener
+//    getTableView.getFocusModel.focusedItemProperty removeListener focusListener
     super.cancelEdit()
     setText(converter convert getItem)
     setGraphic(null)

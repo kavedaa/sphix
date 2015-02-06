@@ -17,7 +17,8 @@ import org.controlsfx.dialog.Dialog.ActionTrait
 import org.sphix.util._
 import org.sphix.collection.mutable.ObservableBuffer
 
-class InputDialog[N <: Node](val inputControl: N, title: String, inputTitle: String, contentDisplay: ContentDisplay) extends Dialog(null, title) { dialog =>
+class InputDialog[N <: Node](val inputControl: N, title: String, inputTitle: String, contentDisplay: ContentDisplay)
+  extends Dialog(null, title) { dialog =>
 
   val content =
     new GridPane {
@@ -90,5 +91,18 @@ class CheckBoxesDialog(title: String, inputTitle: String)
     inputControl requestFocus ()
     if (show() == okAction) Some(cbs filter (_._2.isSelected) map (_._1))
     else None
+  }
+}
+
+class PasswordDialog(title: String, inputTitle: String, authenticator: String => Boolean)
+  extends InputDialog(new PasswordField, title, inputTitle, ContentDisplay.BOTTOM) {
+
+  val correct = inputControl.textProperty delay 250 map authenticator
+
+  okAction.disabledProperty <== correct map (x => !x)
+
+  def input() = {
+    inputControl requestFocus ()
+    show() == okAction
   }
 }
