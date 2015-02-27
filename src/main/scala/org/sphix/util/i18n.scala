@@ -6,7 +6,7 @@ import scala.util.Try
 import java.util.MissingResourceException
 import java.text.MessageFormat
 
-trait I8n {
+trait I18n {
 
   def cls: Class[_]
 
@@ -15,7 +15,7 @@ trait I8n {
   private def value(key: String, locale: Locale) =
     Try { bundle(locale) getString key } getOrElse key
 
-  def i8n(key: String, args: Any*)(implicit locale: Locale) = {
+  def i18n(key: String, args: Any*)(implicit locale: Locale) = {
     val text = value(key, locale)
     MessageFormat format (text, args map (_.asInstanceOf[AnyRef]): _*)
   }

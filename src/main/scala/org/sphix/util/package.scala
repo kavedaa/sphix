@@ -6,6 +6,7 @@ import javafx.event.EventHandler
 import javafx.event.Event
 import javafx.util.Callback
 import java.util.function.Consumer
+import java.lang.Thread.UncaughtExceptionHandler
 
 package object util {
 
@@ -27,12 +28,18 @@ package object util {
   implicit def stringResourceToImageView(s: String)(implicit resolver: ImageResolver) =
     new ImageView(resolver(s))
 
+  implicit def imageToImageView(i: Image) = new ImageView(i)
+  
   implicit def callback[A, B](f: A => B) = new Callback[A, B] {
     def call(a: A) = f(a)
   }
 
   implicit def consumer[A](f: A => Unit) = new Consumer[A] {
     def accept(a: A) = f(a)
+  }
+  
+  implicit def uncaughtExceptionHandler(f: (Thread, Throwable) => Unit) = new UncaughtExceptionHandler {
+    def uncaughtException(thread: Thread, throwable: Throwable) = f(thread, throwable)
   }
 
 }
