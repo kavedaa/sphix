@@ -10,6 +10,7 @@ import java.text.DateFormat
 import java.text.DecimalFormat
 import java.time.format.DateTimeFormatter
 import java.time.LocalDateTime
+import org.sphix.util.DefaultConverter
 
 trait TableCells[S] {
 

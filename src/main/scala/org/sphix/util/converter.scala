@@ -51,17 +51,17 @@ trait FullConverter[A, B] {
   def deconvert(b: B): A
 }
 
-abstract class StringConverter[A] extends javafx.util.StringConverter[A] with FullConverter[A, String] {
-  def toString(a: A) = convert(a)
-  def fromString(s: String): A = deconvert(s)
-}
-
-object StringConverter {
-  def apply[A](f: A => String) = new javafx.util.StringConverter[A] {
-    def toString(a: A) = f(a)
-    def fromString(s: String) = ???
-  }
-}
+//abstract class StringConverter[A] extends javafx.util.StringConverter[A] with FullConverter[A, String] {
+//  def toString(a: A) = convert(a)
+//  def fromString(s: String): A = deconvert(s)
+//}
+//
+//object StringConverter {
+//  def apply[A](f: A => String) = new javafx.util.StringConverter[A] {
+//    def toString(a: A) = f(a)
+//    def fromString(s: String) = ???
+//  }
+//}
 
 object Converter {
 

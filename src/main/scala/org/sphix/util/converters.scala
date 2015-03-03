@@ -13,6 +13,10 @@ object DefaultConverter {
   def apply[T]() = new DefaultConverter[T]
 }
 
+object StringConverter extends RightConverter[String, String] {
+  def convert(a: String) = a
+  def deconvert(b: String) = Some(b)
+}
 
 class StringOptionConverter extends RightConverter[Option[String], String] {
   def convert(a: Option[String]) = a map(_.toString) getOrElse ""

@@ -31,4 +31,14 @@ trait TableUtils[S] extends TableCells[S] { this: TableView[S] =>
       })
     }
   }
+
+  class HeaderColumn(prefWidth: Optional[Double])(text: String, subColumns: TableColumn[S, _]*)
+    extends TableColumn[S, Nothing](text) {
+    
+    def this(text: String, subColumns: TableColumn[S, _]*) =
+      this(Absent)(text, subColumns: _*)
+    
+    prefWidth ifPresent setPrefWidth
+    getColumns addAll (subColumns: _*)
+  }
 }
