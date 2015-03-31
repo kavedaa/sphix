@@ -48,6 +48,18 @@ trait GraphicCell[T] extends Cell[T] {
   }
 }
 
+trait AlignedCell[T] extends Cell[T] {
+
+  def pos: Pos
+
+  override def updateItem(item: T, empty: Boolean) {
+    super.updateItem(item, empty)
+    if (!empty) {
+      setAlignment(pos)
+    }
+  }
+}
+
 
 trait ImageCell[T] extends Cell[T] {
 

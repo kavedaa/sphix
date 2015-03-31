@@ -17,6 +17,7 @@ trait TableCells[S] {
   trait TextCell[T] extends TableCell[S, T] with cell.TextCell[T]
   trait GraphicCell[T] extends TableCell[S, T] with cell.GraphicCell[T]
   trait Cell[T] extends TextCell[T] with GraphicCell[T]
+  trait AlignedCell[T] extends TableCell[S, T]
   trait ImageCell[T] extends TableCell[S, T] with cell.ImageCell[T]
   trait BooleanImageCell extends TableCell[S, Boolean] with cell.BooleanImageCell
   trait EditableBooleanImageCell extends TableCell[S, Boolean] with cell.EditableBooleanImageCell
@@ -60,6 +61,10 @@ trait ColumnCells[S, T] {
     }
   }
 
+  trait AlignedCell extends TableCell[S, T]
+  
+  object AlignedCell
+  
   trait ImageCell extends TableCell[S, T] with cell.ImageCell[T]
 
   object ImageCell {

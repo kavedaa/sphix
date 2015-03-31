@@ -104,4 +104,6 @@ package object concurrent {
   implicit val jfxExecutionContext = ExecutionContext fromExecutor EXECUTOR
   
  def runLater[U](r: => U) = Platform runLater new Runnable { def run { r } }  
+  
+ def fxt[U](r: => U) = Platform runLater new Runnable { def run { r } }
 }
