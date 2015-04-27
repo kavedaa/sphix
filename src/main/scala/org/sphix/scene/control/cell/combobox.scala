@@ -18,11 +18,10 @@ import org.sphix.util.RightConverter
 import org.sphix.util._
 import org.sphix.Val._
 import javafx.scene.input._
-import javafx.scene.control.Cell
 import org.sphix.scene.control.ComboBoxUtils
 import javafx.scene.control.ListCell
 
-class CellProxy[T] extends Cell[T] {
+class CellProxy[T] extends javafx.scene.control.Cell[T] {
   def proxyUpdateItem(item: T, empty: Boolean) {
     updateItem(item, empty)
   }

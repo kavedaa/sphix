@@ -6,17 +6,15 @@ import javafx.scene.image.Image
 import javafx.scene.Node
 import org.sphix.util.RightConverter
 import javafx.beans.property.Property
-import java.text.DateFormat
-import java.text.DecimalFormat
+import java.text._
+import java.time._
 import java.time.format.DateTimeFormatter
-import java.time.LocalDateTime
 import org.sphix.util.DefaultConverter
 
 trait TableCells[S] {
 
   trait TextCell[T] extends TableCell[S, T] with cell.TextCell[T]
   trait GraphicCell[T] extends TableCell[S, T] with cell.GraphicCell[T]
-  trait Cell[T] extends TextCell[T] with GraphicCell[T]
   trait AlignedCell[T] extends TableCell[S, T]
   trait ImageCell[T] extends TableCell[S, T] with cell.ImageCell[T]
   trait BooleanImageCell extends TableCell[S, Boolean] with cell.BooleanImageCell
@@ -26,6 +24,8 @@ trait TableCells[S] {
   trait BigDecimalOptionCell extends TableCell[S, Option[BigDecimal]] with cell.BigDecimalOptionCell
   trait DateCell extends TableCell[S, java.util.Date] with cell.DateCell
   trait DateOptionCell extends TableCell[S, Option[java.util.Date]] with cell.DateOptionCell
+  trait LocalDateCell extends TableCell[S, LocalDate] with cell.LocalDateCell
+  trait LocalDateOptionCell extends TableCell[S, Option[LocalDate]] with cell.LocalDateOptionCell
   trait LocalDateTimeCell extends TableCell[S, LocalDateTime] with cell.LocalDateTimeCell
   trait LocalDateTimeOptionCell extends TableCell[S, Option[LocalDateTime]] with cell.LocalDateTimeOptionCell
   trait CSSCell[T] extends TableCell[S, T] with cell.CSSTableCell[S, T]
@@ -52,15 +52,23 @@ trait ColumnCells[S, T] {
     }
   }
 
-  trait Cell extends TextCell with GraphicCell
+  trait TextGraphicCell extends TextCell with GraphicCell
 
-  object Cell {
-    def apply(text0: T => String, graphic0: T => Option[Node]) = new Cell {
+  object TextGraphicCell {
+    def apply(text0: T => String, graphic0: T => Option[Node]) = new TextGraphicCell {
       def text(item: T) = text0(item)
       def graphic(item: T) = graphic0(item)
     }
   }
 
+  trait StyleCell extends cell.StyleCell[T]
+  
+  object StyleCell {
+    def apply(style0: T => String) = new StyleCell {
+      def style(item: T) = style0(item)
+    }
+  }
+  
   trait AlignedCell extends TableCell[S, T]
   
   object AlignedCell
@@ -128,6 +136,23 @@ trait ColumnCells[S, T] {
     def apply(df0: DateFormat = DateFormat.getInstance) = new DateOptionCell {
       def df = df0
     }
+  }
+
+  trait LocalDateCell extends TableCell[S, LocalDate] with cell.LocalDateCell
+  trait LocalDateOptionCell extends TableCell[S, Option[LocalDate]] with cell.LocalDateOptionCell
+
+  object LocalDateCell {
+    def apply(formatter0: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE) =
+      new LocalDateCell {
+        def formatter = formatter0
+      }
+  }
+
+  object LocalDateOptionCell {
+    def apply(formatter0: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE) =
+      new LocalDateOptionCell {
+        def formatter = formatter0
+      }
   }
 
   trait LocalDateTimeCell extends TableCell[S, LocalDateTime] with cell.LocalDateTimeCell

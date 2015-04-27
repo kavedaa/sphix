@@ -1,6 +1,5 @@
 package org.sphix.scene.control.cell
 
-import javafx.scene.control.Cell
 import javafx.scene.control.TextField
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView

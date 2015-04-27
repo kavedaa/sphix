@@ -1,9 +1,7 @@
 package org.sphix.scene.control.cell
 
-import javafx.scene.control.Cell
 import javafx.scene.control.ListCell
 import javafx.scene.control.TableCell
-import javafx.util.Callback
 import javafx.scene.control.ListView
 import javafx.scene.control.TableColumn
 import javafx.scene.Node
@@ -15,21 +13,32 @@ import javafx.scene.control.Tooltip
 import org.sphix.util._
 import java.text.DateFormat
 import java.text.DecimalFormat
-import java.time.LocalDateTime
+import java.time._
 import java.time.format.DateTimeFormatter
+
+trait Cell[T] extends javafx.scene.control.Cell[T] {
+
+  type Item = T
+  
+  def onUpdate(item: T): Unit = {}
+
+  override def updateItem(item: T, empty: Boolean) {
+    super.updateItem(item, empty)
+    if (!empty) onUpdate(item)
+    else {
+      setText(null)
+      setGraphic(null)
+    }
+  }
+}
 
 trait TextCell[T] extends Cell[T] {
 
   def text(item: T): String
 
-  override def updateItem(item: T, empty: Boolean) {
-    super.updateItem(item, empty)
-    if (!empty) {
-      setText(text(item))
-    }
-    else {
-      setText(null)
-    }
+  override def onUpdate(item: T) = {
+    super.onUpdate(item)
+    setText(text(item))
   }
 }
 
@@ -37,51 +46,48 @@ trait GraphicCell[T] extends Cell[T] {
 
   def graphic(item: T): Option[Node]
 
-  override def updateItem(item: T, empty: Boolean) {
-    super.updateItem(item, empty)
-    if (!empty) {
-      setGraphic(graphic(item).orNull)
-    }
-    else {
-      setGraphic(null)
-    }
+  override def onUpdate(item: T) = {
+    super.onUpdate(item)
+    setGraphic(graphic(item).orNull)
   }
+}
+
+trait StyleCell[T] extends Cell[T] {
+  
+  def style(item: T): String
+  
+  override def onUpdate(item: T) = {
+    super.onUpdate(item)
+    setStyle(style(item))
+  }  
 }
 
 trait AlignedCell[T] extends Cell[T] {
 
   def pos: Pos
 
-  override def updateItem(item: T, empty: Boolean) {
-    super.updateItem(item, empty)
-    if (!empty) {
-      setAlignment(pos)
-    }
+  override def onUpdate(item: T) = {
+    super.onUpdate(item)
+    setAlignment(pos)
   }
 }
 
-
-trait ImageCell[T] extends Cell[T] {
+trait ImageCell[T] extends AlignedCell[T] {
 
   def image(t: T): Option[Image]
 
   private lazy val imageView = new ImageView
 
-  setAlignment(Pos.CENTER)
+  def pos = Pos.CENTER
 
-  override def updateItem(item: T, empty: Boolean) {
-    super.updateItem(item, empty)
-    if (!empty) {
-      image(item) match {
-        case Some(img) =>
-          imageView setImage img
-          setGraphic(imageView)
-        case None =>
-          setGraphic(null)
-      }
-    }
-    else {
-      setGraphic(null)
+  override def onUpdate(item: T) {
+    super.onUpdate(item)
+    image(item) match {
+      case Some(img) =>
+        imageView setImage img
+        setGraphic(imageView)
+      case None =>
+        setGraphic(null)
     }
   }
 }
@@ -109,29 +115,24 @@ trait TooltipCell[T] extends Cell[T] {
   lazy val tooltip = new Tooltip
   lazy val label = new Label { setTooltip(tooltip) }
 
-  override def updateItem(item: T, empty: Boolean) {
-    super.updateItem(item, empty)
-    if (!empty) {
-      label setText (text(item) replaceAll ("[\n\r]", " "))
-      tooltip setText tooltip(item)
-      setGraphic(label)
-    }
-    else {
-      setGraphic(null)
-    }
+  override def onUpdate(item: T) {
+    super.onUpdate(item)
+    label setText (text(item) replaceAll ("[\n\r]", " "))
+    tooltip setText tooltip(item)
+    setGraphic(label)
   }
 }
 
-trait BigDecimalCell extends TextCell[BigDecimal] {
+trait BigDecimalCell extends TextCell[BigDecimal] with AlignedCell[BigDecimal] {
   def dcf: DecimalFormat
   def text(x: BigDecimal) = dcf format x
-  setAlignment(Pos.CENTER_RIGHT)
+  def pos = Pos.CENTER_RIGHT
 }
 
-trait BigDecimalOptionCell extends TextCell[Option[BigDecimal]] {
+trait BigDecimalOptionCell extends TextCell[Option[BigDecimal]] with AlignedCell[Option[BigDecimal]] {
   def dcf: DecimalFormat
   def text(x: Option[BigDecimal]) = x map dcf.format getOrElse ""
-  setAlignment(Pos.CENTER_RIGHT)
+  def pos = Pos.CENTER_RIGHT
 }
 
 trait DateCell extends TextCell[java.util.Date] {
@@ -144,6 +145,16 @@ trait DateOptionCell extends TextCell[Option[java.util.Date]] {
   def text(date: Option[java.util.Date]) = date map df.format getOrElse ""
 }
 
+trait LocalDateCell extends TextCell[LocalDate] {
+  def formatter: DateTimeFormatter
+  def text(ldt: LocalDate) = formatter format ldt
+}
+
+trait LocalDateOptionCell extends TextCell[Option[LocalDate]] {
+  def formatter: DateTimeFormatter
+  def text(ldt: Option[LocalDate]) = ldt map formatter.format getOrElse ""
+}
+
 trait LocalDateTimeCell extends TextCell[LocalDateTime] {
   def formatter: DateTimeFormatter
   def text(ldt: LocalDateTime) = formatter format ldt
@@ -153,71 +164,3 @@ trait LocalDateTimeOptionCell extends TextCell[Option[LocalDateTime]] {
   def formatter: DateTimeFormatter
   def text(ldt: Option[LocalDateTime]) = ldt map formatter.format getOrElse ""
 }
-
-//
-//object AlignedListCell {
-//  def apply[T](pos: Pos) = new Callback[ListView[T], ListCell[T]] {
-//    def call(v: ListView[T]) = new AlignedListCell(pos)
-//  }
-//}
-//
-//object AlignedTableCell {
-//  def apply[S, T](pos: Pos) = new Callback[TableColumn[S, T], TableCell[S, T]] {
-//    def call(c: TableColumn[S, T]) = new AlignedTableCell(pos)
-//  }
-//}
-//
-//object NumericListCell {
-//  def apply[T](nf: NumberFormat) = new Callback[ListView[T], ListCell[T]] {
-//    def call(v: ListView[T]) = new NumericListCell(nf)
-//  }
-//}
-//
-//object NumericTableCell {
-//  def apply[S, T](nf: NumberFormat) = new Callback[TableColumn[S, T], TableCell[S, T]] {
-//    def call(v: TableColumn[S, T]) = new NumericTableCell(nf)
-//  }
-//}
-//
-//object NodeListCell {
-//  def apply[T](node: T => Option[Node]) = new Callback[ListView[T], ListCell[T]] {
-//    def call(v: ListView[T]) = new NodeListCell(node)
-//  }
-//}
-//
-//object NodeTableCell {
-//  def apply[S, T](node: T => Option[Node]) = new Callback[TableColumn[S, T], TableCell[S, T]] {
-//    def call(c: TableColumn[S, T]) = new NodeTableCell(node)
-//  }
-//}
-//
-//object NodeTextListCell {
-//  def apply[T](node: T => Option[Node], text: T => String) = new Callback[ListView[T], ListCell[T]] {
-//    def call(v: ListView[T]) = new NodeTextListCell(node, text)
-//  }
-//}
-//
-//object NodeTextTableCell {
-//  def apply[S, T](node: T => Option[Node], text: T => String) = new Callback[TableColumn[S, T], TableCell[S, T]] {
-//    def call(c: TableColumn[S, T]) = new NodeTextTableCell(node, text)
-//  }
-//}
-//
-//object ImageTextListCell {
-//  def apply[T](image: T => Option[Image], text: T => String) = new Callback[ListView[T], ListCell[T]] {
-//    def call(v: ListView[T]) = new ImageTextListCell(image, text)
-//  }
-//}
-//
-//object ImageTextTableCell {
-//  def apply[S, T](image: T => Option[Image], text: T => String) = new Callback[TableColumn[S, T], TableCell[S, T]] {
-//    def call(c: TableColumn[S, T]) = new ImageTextTableCell(image, text)
-//  }
-//}
-
-//object StaticImageTableCell {
-//  def apply[S, T](imageFileName: String, show: T => Boolean)(implicit cls: Class[_]) = new Callback[TableColumn[S, T], TableCell[S, T]] {
-//    def call(c: TableColumn[S, T]) = new StaticImageTableCell(imageFileName, show)
-//  }
-//}
-//

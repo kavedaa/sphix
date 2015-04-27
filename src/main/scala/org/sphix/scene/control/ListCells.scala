@@ -39,9 +39,6 @@ trait ListCells[T] {
     }
   }
 
-//  trait NumericCell extends ListCell[T] with cell.NumericCell[T]  
-//
-//  trait NumericOptionCell extends ListCell[T] with cell.NumericOptionCell[T]  
 
   
 }

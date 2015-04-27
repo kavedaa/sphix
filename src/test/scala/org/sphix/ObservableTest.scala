@@ -1,12 +1,11 @@
 package org.sphix
 
-import org.scalatest.FeatureSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest._
 import javafx.beans.InvalidationListener
 import javafx.{ beans => jfxb }
 import javafx.beans.property.SimpleStringProperty
 
-class ObservableTest extends FeatureSpec with ShouldMatchers {
+class ObservableTest extends FeatureSpec with Matchers {
 
   //	Using a Var to test all features of Observable
 
