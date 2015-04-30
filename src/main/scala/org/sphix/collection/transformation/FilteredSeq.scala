@@ -10,6 +10,8 @@ import org.sphix.collection.ObservableSeq
 import org.sphix.collection.Change
 import javafx.collections.ListChangeListener
 
+// TODO make this a wrapper around JavaFX FilteredList instead
+
 class FilteredSeq[A](source: ObservableSeq[A], predicate: ObservableValue[A => Boolean])
   extends ObservableSeq[A] {
 

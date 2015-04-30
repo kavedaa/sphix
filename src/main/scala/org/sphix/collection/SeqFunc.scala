@@ -13,17 +13,17 @@ abstract class SeqFunc[A](dependencies: jfxb.Observable*) extends ObservableSeq[
 
   def toObservableList = FXCollections unmodifiableObservableList observableList
 
-  private def reevaluate() { observableList setAll (JavaConversions asJavaCollection compute) }
+  def reEvaluate() = { observableList setAll (JavaConversions asJavaCollection compute) }
 
   private val listener = new InvalidationListener {
     def invalidated(o: jfxb.Observable) {
-      reevaluate()
+      reEvaluate()
     }
   }
 
   dependencies foreach { _ addListener listener }
 
-  reevaluate()
+  reEvaluate()
 }
 
 object SeqFunc {
