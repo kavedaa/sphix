@@ -15,6 +15,7 @@ import java.text.DateFormat
 import java.text.DecimalFormat
 import java.time._
 import java.time.format.DateTimeFormatter
+import javafx.scene.control.Hyperlink
 
 trait Cell[T] extends javafx.scene.control.Cell[T] {
 
@@ -163,4 +164,19 @@ trait LocalDateTimeCell extends TextCell[LocalDateTime] {
 trait LocalDateTimeOptionCell extends TextCell[Option[LocalDateTime]] {
   def formatter: DateTimeFormatter
   def text(ldt: Option[LocalDateTime]) = ldt map formatter.format getOrElse ""
+}
+
+trait HyperlinkCell[T] extends Cell[T] {
+  
+  def text(item: T): String
+  def action(item: T): Unit
+  
+  lazy val hyperlink = new Hyperlink
+  
+  override def onUpdate(item: T) = {
+    super.onUpdate(item)
+    hyperlink setText text(item)
+    hyperlink setOnAction { () => action(item) }
+    setGraphic(hyperlink)
+  }
 }

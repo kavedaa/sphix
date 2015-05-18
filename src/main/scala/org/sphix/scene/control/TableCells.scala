@@ -172,6 +172,16 @@ trait ColumnCells[S, T] {
       }
   }
 
+  trait HyperlinkCell extends TableCell[S, T] with cell.HyperlinkCell[T]
+  
+  object HyperlinkCell {
+    def apply(text0: T => String, action0: T => Unit) =
+      new HyperlinkCell {
+      def text(item: T) = text0(item)
+      def action(item: T) = action0(item)
+    }
+  }
+  
   trait CSSCell extends TableCell[S, T] with cell.CSSTableCell[S, T]
 
   trait TextFieldCell extends cell.TextFieldTableCell[S, T]
