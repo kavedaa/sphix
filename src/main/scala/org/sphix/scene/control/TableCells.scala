@@ -10,6 +10,7 @@ import java.text._
 import java.time._
 import java.time.format.DateTimeFormatter
 import org.sphix.util.DefaultConverter
+import javafx.geometry.Pos
 
 trait TableCells[S] {
 
@@ -62,17 +63,22 @@ trait ColumnCells[S, T] {
   }
 
   trait StyleCell extends cell.StyleCell[T]
-  
+
   object StyleCell {
     def apply(style0: T => String) = new StyleCell {
       def style(item: T) = style0(item)
     }
   }
-  
-  trait AlignedCell extends TableCell[S, T]
-  
-  object AlignedCell
-  
+
+  trait AlignedCell extends TableCell[S, T] with cell.AlignedCell[T]
+
+  object AlignedCell {
+    def apply(pos0: Pos) = new TextCell with AlignedCell {
+      def text(item: T) = item.toString
+      def pos = pos0
+    }
+  }
+
   trait ImageCell extends TableCell[S, T] with cell.ImageCell[T]
 
   object ImageCell {
@@ -173,15 +179,15 @@ trait ColumnCells[S, T] {
   }
 
   trait HyperlinkCell extends TableCell[S, T] with cell.HyperlinkCell[T]
-  
+
   object HyperlinkCell {
     def apply(text0: T => String, action0: T => Unit) =
       new HyperlinkCell {
-      def text(item: T) = text0(item)
-      def action(item: T) = action0(item)
-    }
+        def text(item: T) = text0(item)
+        def action(item: T) = action0(item)
+      }
   }
-  
+
   trait CSSCell extends TableCell[S, T] with cell.CSSTableCell[S, T]
 
   trait TextFieldCell extends cell.TextFieldTableCell[S, T]
