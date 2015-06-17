@@ -20,7 +20,7 @@ import javafx.scene.control.Hyperlink
 trait Cell[T] extends javafx.scene.control.Cell[T] {
 
   type Item = T
-  
+
   def onUpdate(item: T): Unit = {}
 
   override def updateItem(item: T, empty: Boolean) {
@@ -54,13 +54,13 @@ trait GraphicCell[T] extends Cell[T] {
 }
 
 trait StyleCell[T] extends Cell[T] {
-  
+
   def style(item: T): String
-  
+
   override def onUpdate(item: T) = {
     super.onUpdate(item)
     setStyle(style(item))
-  }  
+  }
 }
 
 trait AlignedCell[T] extends Cell[T] {
@@ -111,16 +111,20 @@ trait EditableBooleanImageCell extends BooleanImageCell {
 trait TooltipCell[T] extends Cell[T] {
 
   def text(item: T): String
-  def tooltip(item: T): String
+  def tooltipText(item: T): Option[String]
 
   lazy val tooltip = new Tooltip
-  lazy val label = new Label { setTooltip(tooltip) }
+  lazy val label = new Label
 
   override def onUpdate(item: T) {
     super.onUpdate(item)
     label setText (text(item) replaceAll ("[\n\r]", " "))
-    tooltip setText tooltip(item)
     setGraphic(label)
+    tooltipText(item) map { t =>
+      tooltip setText t
+      setTooltip(tooltip)
+    } getOrElse setTooltip(null)
+
   }
 }
 
@@ -167,12 +171,12 @@ trait LocalDateTimeOptionCell extends TextCell[Option[LocalDateTime]] {
 }
 
 trait HyperlinkCell[T] extends Cell[T] {
-  
+
   def text(item: T): String
   def action(item: T): Unit
-  
+
   lazy val hyperlink = new Hyperlink
-  
+
   override def onUpdate(item: T) = {
     super.onUpdate(item)
     hyperlink setText text(item)

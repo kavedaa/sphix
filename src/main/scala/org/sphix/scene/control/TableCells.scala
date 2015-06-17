@@ -108,9 +108,9 @@ trait ColumnCells[S, T] {
   trait TooltipCell extends TableCell[S, T] with cell.TooltipCell[T]
 
   object TooltipCell {
-    def apply(text0: T => String, tooltip0: T => String) = new TooltipCell {
+    def apply(text0: T => String, tooltip0: T => Option[String]) = new TooltipCell {
       def text(item: T) = text0(item)
-      def tooltip(item: T) = tooltip0(item)
+      def tooltipText(item: T) = tooltip0(item)
     }
   }
 
