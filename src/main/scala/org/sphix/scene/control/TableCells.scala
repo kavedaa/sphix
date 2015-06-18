@@ -73,9 +73,9 @@ trait ColumnCells[S, T] {
   trait AlignedCell extends TableCell[S, T] with cell.AlignedCell[T]
 
   object AlignedCell {
-    def apply(pos0: Pos) = new TextCell with AlignedCell {
+    def apply(pos0: T => Pos) = new TextCell with AlignedCell {
       def text(item: T) = item.toString
-      def pos = pos0
+      def pos(item: T) = pos0(item)
     }
   }
 

@@ -65,11 +65,11 @@ trait StyleCell[T] extends Cell[T] {
 
 trait AlignedCell[T] extends Cell[T] {
 
-  def pos: Pos
+  def pos(item: T): Pos
 
   override def onUpdate(item: T) = {
     super.onUpdate(item)
-    setAlignment(pos)
+    setAlignment(pos(item))
   }
 }
 
@@ -79,7 +79,7 @@ trait ImageCell[T] extends AlignedCell[T] {
 
   private lazy val imageView = new ImageView
 
-  def pos = Pos.CENTER
+  def pos(item: T) = Pos.CENTER
 
   override def onUpdate(item: T) {
     super.onUpdate(item)
@@ -131,13 +131,13 @@ trait TooltipCell[T] extends Cell[T] {
 trait BigDecimalCell extends TextCell[BigDecimal] with AlignedCell[BigDecimal] {
   def dcf: DecimalFormat
   def text(x: BigDecimal) = dcf format x
-  def pos = Pos.CENTER_RIGHT
+  def pos(item: BigDecimal) = Pos.CENTER_RIGHT
 }
 
 trait BigDecimalOptionCell extends TextCell[Option[BigDecimal]] with AlignedCell[Option[BigDecimal]] {
   def dcf: DecimalFormat
   def text(x: Option[BigDecimal]) = x map dcf.format getOrElse ""
-  def pos = Pos.CENTER_RIGHT
+  def pos(item: Option[BigDecimal]) = Pos.CENTER_RIGHT
 }
 
 trait DateCell extends TextCell[java.util.Date] {
