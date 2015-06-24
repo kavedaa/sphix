@@ -18,6 +18,8 @@ trait TableCells[S] {
   trait GraphicCell[T] extends TableCell[S, T] with cell.GraphicCell[T]
   trait AlignedCell[T] extends TableCell[S, T]
   trait ImageCell[T] extends TableCell[S, T] with cell.ImageCell[T]
+  trait BooleanTextCell extends TableCell[S, Boolean] with cell.BooleanTextCell
+  trait BooleanOptionTextCell extends TableCell[S, Option[Boolean]] with cell.BooleanOptionTextCell
   trait BooleanImageCell extends TableCell[S, Boolean] with cell.BooleanImageCell
   trait EditableBooleanImageCell extends TableCell[S, Boolean] with cell.EditableBooleanImageCell
   trait TooltipCell[T] extends TableCell[S, T] with cell.TooltipCell[T]
@@ -84,6 +86,24 @@ trait ColumnCells[S, T] {
   object ImageCell {
     def apply(image0: T => Option[Image]) = new ImageCell {
       def image(item: T) = image0(item)
+    }
+  }
+
+  trait BooleanTextCell extends TableCell[S, Boolean] with cell.BooleanTextCell
+
+  object BooleanTextCell {
+    def apply(trueText0: String, falseText0: String = "") = new BooleanTextCell {
+      def trueText = trueText0
+      def falseText = falseText0
+    }
+  }
+
+  trait BooleanOptionTextCell extends TableCell[S, Option[Boolean]] with cell.BooleanOptionTextCell
+
+  object BooleanOptionTextCell {
+    def apply(trueText0: String, falseText0: String = "") = new BooleanOptionTextCell {
+      def trueText = trueText0
+      def falseText = falseText0
     }
   }
 

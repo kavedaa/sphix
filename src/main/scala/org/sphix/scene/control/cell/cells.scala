@@ -93,6 +93,23 @@ trait ImageCell[T] extends AlignedCell[T] {
   }
 }
 
+trait BooleanTextCell extends TextCell[Boolean] {
+
+  def trueText: String
+  def falseText: String
+
+  def text(item: Boolean) = if (item) trueText else falseText
+}
+
+trait BooleanOptionTextCell extends TextCell[Option[Boolean]] {
+
+  def trueText: String
+  def falseText: String
+
+  def text(item: Option[Boolean]) =
+    if (item contains true) trueText else if (item contains false) falseText else ""
+}
+
 trait BooleanImageCell extends ImageCell[Boolean] {
 
   def trueImage: Option[Image]
