@@ -11,6 +11,7 @@ import java.time._
 import java.time.format.DateTimeFormatter
 import org.sphix.util.DefaultConverter
 import javafx.geometry.Pos
+import org.sphix.collection.ObservableSeq
 
 trait TableCells[S] {
 
@@ -223,6 +224,15 @@ trait ColumnCells[S, T] {
   object CheckBoxCell {
     def apply(f0: S => Property[Boolean]) = new CheckBoxCell {
       def f(s: S) = f0(s)
+    }
+  }
+
+  trait ComboBoxCell extends cell.ComboBoxTableCell[S, T]
+
+  object ComboBoxCell {
+    def apply(items0: S => ObservableSeq[T], f0: T => String) = new ComboBoxCell {
+      def items(s: S) = items0(s)
+      def f(t: T) = f0(t)
     }
   }
 

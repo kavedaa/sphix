@@ -27,11 +27,15 @@ class CellProxy[T] extends javafx.scene.control.Cell[T] {
   }
 }
 
-class ComboBoxTableCell[S, T](items: => ObservableSeq[T], f: T => String) extends TableCell[S, T] { cell =>
+abstract class ComboBoxTableCell[S, T] extends TableCell[S, T] { cell =>
 
+  def items(s: S): ObservableSeq[T]
+  
+  def f(t: T): String
+  
   this.getStyleClass().add("combo-box-table-cell");
 
-  private lazy val comboBox = new ComboBox[T](items) with ComboBoxUtils[T] {
+  private lazy val comboBox = new ComboBox[T] with ComboBoxUtils[T] {
 
     setCell(TextCell(f))
     setButtonCell(TextCell(f))
@@ -57,7 +61,7 @@ class ComboBoxTableCell[S, T](items: => ObservableSeq[T], f: T => String) extend
   override def startEdit() {
     if (isEditable && getTableView.isEditable && getTableColumn.isEditable) {
     
-      comboBox setItems items
+      comboBox setItems items(getTableView.getItems get getIndex)
       comboBox.getSelectionModel select getItem //	important that this comes before super.startEdit()
 
       super.startEdit()
