@@ -190,6 +190,7 @@ trait LocalDateTimeOptionCell extends TextCell[Option[LocalDateTime]] {
 trait HyperlinkCell[T] extends Cell[T] {
 
   def text(item: T): String
+  def graphic(item: T): Option[Node]
   def action(item: T): Unit
 
   lazy val hyperlink = new Hyperlink
@@ -197,6 +198,7 @@ trait HyperlinkCell[T] extends Cell[T] {
   override def onUpdate(item: T) = {
     super.onUpdate(item)
     hyperlink setText text(item)
+    graphic(item) foreach hyperlink.setGraphic 
     hyperlink setOnAction { () => action(item) }
     setGraphic(hyperlink)
   }
