@@ -19,3 +19,11 @@ class ValueField[A](converter: RightConverter[A, String]) extends javafx.scene.c
   private def noloop[U](u: => U) = if (!updating) { updating = true; u; updating = false }
 
 }
+
+object ValueField {
+
+  def apply[A](converter: RightConverter[A, String])(initialValue: Option[A]) =
+    new ValueField[A](converter) {
+      value() = initialValue
+    }
+}
