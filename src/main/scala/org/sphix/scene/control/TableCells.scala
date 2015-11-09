@@ -202,10 +202,8 @@ trait ColumnCells[S, T] {
   trait HyperlinkCell extends TableCell[S, T] with cell.HyperlinkCell[T]
 
   object HyperlinkCell {
-    def apply(text0: T => String, graphic0: T => Option[Node], action0: T => Unit) =
+    def apply(action0: T => Unit) =
       new HyperlinkCell {
-        def text(item: T) = text0(item)
-        def graphic(item: T) = graphic0(item)
         def action(item: T) = action0(item)
       }
   }
