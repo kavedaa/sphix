@@ -203,5 +203,8 @@ trait HyperlinkCell[T] extends Cell[T] {
       setGraphic(hyperlink)
       setText(null)
     }
+    else {
+      if (getGraphic eq hyperlink) setGraphic(null)
+    }
   }
 }
