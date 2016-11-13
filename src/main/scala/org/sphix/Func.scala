@@ -3,7 +3,10 @@ package org.sphix
 import javafx.{ beans => jfxb }
 import javafx.beans.value.{ ObservableValue => OV }
 
-abstract class Func[A](dependencies: jfxb.Observable*) extends LazyVal[A] {
+abstract class Func[A](protected val dependencies0: jfxb.Observable*) extends LazyVal[A] {
+
+  //  Make it overridable
+  def dependencies = dependencies0
 
   dependencies foreach (_ addListener lazyListener)
 

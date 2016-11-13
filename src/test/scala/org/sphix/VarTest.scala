@@ -66,17 +66,29 @@ class VarTest extends FeatureSpec with Matchers {
 
     scenario("bind") {
 
+      var prev = 0
+      var curr = 0
+
       val p = Var(3)
       val q = Var(4)
+
+      p onChange { (ov, prev0, curr0) =>
+        prev = prev0
+        curr = curr0
+      }
 
       p <== q
 
       p() should equal(4)
       p.isBound should be(true)
-
+      prev shouldEqual 3
+      curr shouldEqual 4
+      
       q() = 5
 
       p() should equal(5)
+      prev shouldEqual 4
+      curr shouldEqual 5
     }
 
     scenario("unbind") {
@@ -117,35 +129,47 @@ class VarTest extends FeatureSpec with Matchers {
     }
 
     scenario("bind to JFX property") {
+
+      var prev = ""
+      var curr = ""
       
       val p = Var("Hello")
       val q = new SimpleStringProperty("Goodbye")
-      
+
+      p onChange { (ov, prev0, curr0) =>
+        prev = prev0
+        curr = curr0
+      }
+
       p <== q
-      
+
       p() shouldEqual "Goodbye"
-      
+      prev shouldEqual "Hello"
+      curr shouldEqual "Goodbye"
+
       q setValue "Hello again"
-      
+
       p() shouldEqual "Hello again"
+      prev shouldEqual "Goodbye"
+      curr shouldEqual "Hello again"
     }
-    
+
     scenario("bind to read-only JFX property") {
-      
+
       val p = Var("Hello")
       val q = new ReadOnlyStringWrapper("Goodbye")
       val q1 = q.getReadOnlyProperty
-      
+
       p <== q1
-      
+
       p() shouldEqual "Goodbye"
-      
+
       q setValue "Hello again"
-      
+
       p() shouldEqual "Hello again"
-      
+
     }
-    
+
     scenario("pimp JFX property") {
 
       val p = new SimpleObjectProperty[Int](3)
@@ -162,104 +186,100 @@ class VarTest extends FeatureSpec with Matchers {
       p() should equal(5)
     }
   }
-  
+
   feature("bidirectional binding") {
-    
+
     scenario("bind - without converter") {
-      
+
       val p = Var(3)
       val q = Var(4)
-      
+
       p <==> q
-      
+
       p() shouldEqual 4
-      
+
       p() = 5
-      
+
       q() shouldEqual 5
-      
+
       q() = 6
-      
+
       p() shouldEqual 6
     }
 
     scenario("unbind - without converter") {
-      
+
       val p = Var(3)
       val q = Var(4)
-      
+
       p <==> q
-      
+
       p() shouldEqual 4
-      
+
       p <=!=> q
-      
+
       p() = 5
-      
+
       q() shouldEqual 4
     }
-    
+
     scenario("bind - with converter") {
-      
+
       val p = Var(3)
       val q = Var(3)
-      
+
       import Var._
-      
+
       p <=~ FullConverter[Int, Int](_ + 2, _ - 2) ~=> q
-      
+
       p() shouldEqual 1
-      
+
       p() = 2
-      
+
       q() shouldEqual 4
-      
+
       q() = 5
-      
+
       p() shouldEqual 3
     }
 
     scenario("unbind - with converter") {
-      
+
       val p = Var(3)
       val q = Var(3)
-      
+
       import Var._
-      
+
       p <=~ FullConverter[Int, Int](_ + 2, _ - 2) ~=> q
-      
+
       p() shouldEqual 1
-      
+
       p <=!=> q
-      
+
       q() = 2
-      
+
       p() shouldEqual 1
     }
-    
-    
+
     scenario("conversion between primitive types") {
-      
+
       val p = Var[Boolean](true)
       val q = new SimpleBooleanProperty(false)
-      
+
       p <=~=> q
-      
+
       p() shouldEqual false
-      
+
       p() = true
-      
+
       q.get shouldEqual true
-      
+
       q set false
-      
+
       p() shouldEqual false
     }
-    
+
   }
-  
-  
-  
 
   feature("misc") {
 
