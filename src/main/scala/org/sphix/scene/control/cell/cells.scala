@@ -43,6 +43,14 @@ trait TextCell[T] extends Cell[T] {
   }
 }
 
+trait StripNewLines[T] extends TextCell[T] {
+
+  override def onUpdate(item: T) = {
+    super.onUpdate(item)
+    setText(text(item) split "\r\n" mkString " ")
+  }
+}
+
 trait GraphicCell[T] extends Cell[T] {
 
   def graphic(item: T): Option[Node]

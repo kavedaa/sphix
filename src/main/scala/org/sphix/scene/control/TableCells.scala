@@ -48,6 +48,8 @@ trait ColumnCells[S, T] {
     }
   }
 
+  trait StripNewLines extends TableCell[S, T] with cell.StripNewLines[T]
+
   trait GraphicCell extends TableCell[S, T] with cell.GraphicCell[T]
 
   object GraphicCell {
