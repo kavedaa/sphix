@@ -23,6 +23,12 @@ abstract class SeqFunc[A](dependencies: jfxb.Observable*) extends ObservableSeq[
 
   dependencies foreach { _ addListener listener }
 
+  compute match {
+    //  TODO we could make this the underlying list instead??? 
+    case os: ObservableSeq[_] => os addListener listener
+    case _ =>
+  }
+  
   reEvaluate()
 }
 
