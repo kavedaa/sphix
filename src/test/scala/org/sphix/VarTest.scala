@@ -17,7 +17,7 @@ class VarTest extends FeatureSpec with Matchers {
 
       val p = Var(3)
 
-      p() should equal(3)
+      p() shouldEqual 3
     }
   }
 
@@ -29,7 +29,7 @@ class VarTest extends FeatureSpec with Matchers {
 
       p() = 4
 
-      p() should equal(4)
+      p() shouldEqual 4
     }
 
     scenario("when bound") {
@@ -39,9 +39,9 @@ class VarTest extends FeatureSpec with Matchers {
 
       p <== q
 
-      evaluating { p() = 5 } should produce[RuntimeException]
+      intercept[RuntimeException] { p() = 5 } 
 
-      p() should equal(4)
+      p() shouldEqual 4
     }
 
     scenario("when same value - nothing should fire") {
@@ -54,11 +54,11 @@ class VarTest extends FeatureSpec with Matchers {
 
       p() = 4
 
-      count should equal(1)
+      count shouldEqual 1
 
       p() = 4
 
-      count should equal(1)
+      count shouldEqual 1
     }
   }
 
@@ -79,14 +79,14 @@ class VarTest extends FeatureSpec with Matchers {
 
       p <== q
 
-      p() should equal(4)
-      p.isBound should be(true)
+      p() shouldEqual 4
+      p.isBound shouldBe true
       prev shouldEqual 3
       curr shouldEqual 4
       
       q() = 5
 
-      p() should equal(5)
+      p() shouldEqual 5
       prev shouldEqual 4
       curr shouldEqual 5
     }
@@ -98,7 +98,7 @@ class VarTest extends FeatureSpec with Matchers {
 
       p <== q
 
-      p() should equal(4)
+      p() shouldEqual 4
 
       p unbind ()
 
@@ -115,17 +115,17 @@ class VarTest extends FeatureSpec with Matchers {
 
       p1 <== p2
 
-      p1() should equal(4)
+      p1() shouldEqual 4
 
       p2 <== p3
 
-      p2() should equal(5)
-      p1() should equal(5)
+      p2() shouldEqual 5
+      p1() shouldEqual 5
 
       p3() = 6
 
-      p2() should equal(6)
-      p1() should equal(6)
+      p2() shouldEqual 6
+      p1() shouldEqual 6
     }
 
     scenario("bind to JFX property") {
@@ -179,11 +179,11 @@ class VarTest extends FeatureSpec with Matchers {
 
       p <== q
 
-      p() should equal(4)
+      p() shouldEqual 4
 
       q() = 5
 
-      p() should equal(5)
+      p() shouldEqual 5
     }
   }
 

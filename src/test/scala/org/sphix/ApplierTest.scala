@@ -1,10 +1,9 @@
 package org.sphix
 
-import org.scalatest.FeatureSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest._
 import org.sphix.collection.mutable.ObservableBuffer
 
-class ApplierTest extends FeatureSpec with ShouldMatchers {
+class ApplierTest extends FeatureSpec with Matchers {
 
   //	these aren't real tests, we just check that the compiler is happy
   

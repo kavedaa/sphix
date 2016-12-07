@@ -1,50 +1,49 @@
 package org.sphix.collection
 
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest._
 import org.sphix.collection.mutable.ObservableBuffer
 import javafx.beans.InvalidationListener
 import javafx.beans.Observable
 import org.sphix.Val
 
-class ObservableSeqTest extends FunSuite with ShouldMatchers {
+class ObservableSeqTest extends FunSuite with Matchers {
 
   test("factory") {
 
-    ObservableSeq[Nothing]() should equal(Nil)
+    ObservableSeq[Nothing]() shouldEqual Nil
 
-    ObservableSeq('A, 'B) should equal(ObservableSeq('A, 'B))
+    ObservableSeq('A, 'B) shouldEqual ObservableSeq('A, 'B)
   }
 
   test("generic collection methods") {
 
-    ObservableSeq('A, 'B).toSeq should equal(Seq('A, 'B))
+    ObservableSeq('A, 'B).toSeq shouldEqual Seq('A, 'B)
 
-    ObservableSeq('A, 'B).to[Seq] should equal(Seq('A, 'B))
+    ObservableSeq('A, 'B).to[Seq] shouldEqual Seq('A, 'B)
 
-    Seq('A, 'B).to[ObservableSeq] should equal(ObservableSeq('A, 'B))
+    Seq('A, 'B).to[ObservableSeq] shouldEqual ObservableSeq('A, 'B)
   }
 
   test("samples of inherited standard collection methods") {
 
     val os = ObservableSeq(1, 2, 3, 4, 5)
 
-    os filter (_ > 3) should equal(ObservableSeq(4, 5))
+    os filter (_ > 3) shouldEqual ObservableSeq(4, 5)
 
-    os map (_ * 2) should equal(ObservableSeq(2, 4, 6, 8, 10))
+    os map (_ * 2) shouldEqual ObservableSeq(2, 4, 6, 8, 10)
   }
 
   test("apply") {
 
     val os = ObservableSeq('A, 'B)
 
-    os(0) should equal('A)
-    os(1) should equal('B)
+    os(0) shouldEqual 'A
+    os(1) shouldEqual 'B
   }
 
   test("length") {
-    ObservableSeq().length should equal(0)
-    ObservableSeq('A, 'B).length should equal(2)
+    ObservableSeq().length shouldEqual 0
+    ObservableSeq('A, 'B).length shouldEqual 2
   }
 
   test("invalidation listener") {
@@ -61,11 +60,11 @@ class ObservableSeqTest extends FunSuite with ShouldMatchers {
 
     ob addListener listener
     ob += 'B
-    count should equal(1)
+    count shouldEqual 1
 
     ob removeListener listener
     ob += 'C
-    count should equal(1)
+    count shouldEqual 1
   }
 
   test("observe") {
@@ -79,11 +78,11 @@ class ObservableSeqTest extends FunSuite with ShouldMatchers {
     }
 
     ob += 'B
-    count should equal(1)
+    count shouldEqual 1
 
     obs dispose ()
     ob += 'C
-    count should equal(1)
+    count shouldEqual 1
   }
 
   test("onChange") {
@@ -97,11 +96,11 @@ class ObservableSeqTest extends FunSuite with ShouldMatchers {
     }
 
     ob += 'B
-    count should equal(1)
+    count shouldEqual 1 
 
     obs dispose ()
     ob += 'C
-    count should equal(1)
+    count shouldEqual 1
   }
 
   test("onAdded") {
@@ -116,7 +115,7 @@ class ObservableSeqTest extends FunSuite with ShouldMatchers {
 
     ob ++= Seq('B, 'C)
 
-    added should equal(Seq('B, 'C))
+    added shouldEqual Seq('B, 'C)
   }
 
   test("onRemoved") {
@@ -131,24 +130,24 @@ class ObservableSeqTest extends FunSuite with ShouldMatchers {
 
     ob --= Seq('B, 'C)
 
-    removed should equal(Seq('B, 'C))
+    removed shouldEqual Seq('B, 'C)
   }
 
   test("implicit conversion to ObservableList") {
 
     val ol: javafx.collections.ObservableList[Symbol] = ObservableSeq('A, 'B)
 
-    ol get 0 should equal('A)
-    ol get 1 should equal('B)
+    ol get 0 shouldEqual 'A
+    ol get 1 shouldEqual 'B
   }
 
   test("modify underlying unmodifiable ObservableList") {
 
     val ol = ObservableSeq('A, 'B).toObservableList
 
-    evaluating {
+    intercept[UnsupportedOperationException] {
       ol add 'C
-    } should produce[UnsupportedOperationException]
+    } 
   }
 
   test("distinctBy") {
@@ -157,6 +156,6 @@ class ObservableSeqTest extends FunSuite with ShouldMatchers {
     
     val os = ObservableSeq(Person("John", 34), Person("Tom", 54), Person("John", 23))
     
-    os distinctBy(_.name) should equal(Seq(Person("John", 34), Person("Tom", 54)))
+    os distinctBy(_.name) shouldEqual Seq(Person("John", 34), Person("Tom", 54))
   }
 }

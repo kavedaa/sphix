@@ -22,11 +22,11 @@ class ObservingValTest extends FunSuite with Matchers {
       
       john.name() = "Johannes"
         
-      count should equal(1)
+      count shouldEqual 1
       
       john.age() = 43
       
-      count should equal(2)
+      count shouldEqual 2
     }
     
   

@@ -36,7 +36,7 @@ class FilteredSeq[A](source: ObservableSeq[A], predicate: ObservableValue[A => B
     def addListener(listener: ListChangeListener[_ >: A]) = observableList addListener listener
     def removeListener(listener: ListChangeListener[_ >: A]) = observableList addListener listener
     def sort() { throw new UnsupportedOperationException("Please provide a java.util.Comparator.") }
-    def sort(comparator: java.util.Comparator[_ >: A]) { FXCollections.sort[A](originalSource.toObservableList, comparator) }
+    override def sort(comparator: java.util.Comparator[_ >: A]) { FXCollections.sort[A](originalSource.toObservableList, comparator) }
   }
 
   def refilter() {

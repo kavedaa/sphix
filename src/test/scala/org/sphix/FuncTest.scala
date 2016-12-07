@@ -1,9 +1,8 @@
 package org.sphix
 
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest._
 
-class FuncTest extends FunSuite with ShouldMatchers {
+class FuncTest extends FunSuite with Matchers {
 
   test("computation") {
     
@@ -11,11 +10,11 @@ class FuncTest extends FunSuite with ShouldMatchers {
     
     val func = new Func[Int](a) { def compute = a() * 2 }
     
-    func() should equal(6)
+    func() shouldEqual 6
     
     a() = 4
     
-    func() should equal(8)
+    func() shouldEqual 8
   }
   
   test("initialization laziness") {
@@ -28,10 +27,10 @@ class FuncTest extends FunSuite with ShouldMatchers {
     
     val func = new Func[String](dummy) { def compute = a() }
 
-    count should equal(0)
+    count shouldEqual 0
     
     func() should equal("foo")
     
-    count should equal(1)    
+    count shouldEqual 1    
   }
 }

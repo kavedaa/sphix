@@ -1,13 +1,11 @@
 package org.sphix.collection.transformation
 
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest._
 import org.sphix.collection.mutable.ObservableBuffer
-import org.scalatest.FeatureSpec
 import org.sphix.collection.ObservableSeq
 import javafx.beans.property.SimpleObjectProperty
 
-class FilteredSeqTest extends FeatureSpec with ShouldMatchers {
+class FilteredSeqTest extends FeatureSpec with Matchers {
 
   feature("static filter") {
 
@@ -17,21 +15,21 @@ class FilteredSeqTest extends FeatureSpec with ShouldMatchers {
 
       val filtered = new FilteredSeq(ob, (i: Int) => true)
 
-      filtered should equal(Seq(1, 2, 3, 4, 5))
+      filtered shouldEqual Seq(1, 2, 3, 4, 5)
     }
 
     scenario("no-pass filter") {
 
       val filtered = new FilteredSeq(ob, (i: Int) => false)
 
-      filtered should equal(Nil)
+      filtered shouldEqual Nil
     }
 
     scenario("simple filter") {
 
       val filtered = new FilteredSeq(ob, (i: Int) => i > 3)
 
-      filtered should equal(Seq(4, 5))
+      filtered shouldEqual Seq(4, 5)
     }
   }
 
@@ -47,21 +45,21 @@ class FilteredSeqTest extends FeatureSpec with ShouldMatchers {
 
       filter setValue { (i: Int) => true }
 
-      filtered should equal(Seq(1, 2, 3, 4, 5))
+      filtered shouldEqual Seq(1, 2, 3, 4, 5)
     }
 
     scenario("no-pass filter") {
 
       filter setValue { (i: Int) => false }
 
-      filtered should equal(Nil)
+      filtered shouldEqual Nil
     }
 
     scenario("simple filter") {
 
       filter setValue { (i: Int) => i > 3 }
 
-      filtered should equal(Seq(4, 5))
+      filtered shouldEqual Seq(4, 5)
     }
 
   }

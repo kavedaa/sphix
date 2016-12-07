@@ -14,7 +14,7 @@ class ValTest extends FeatureSpec with Matchers {
 
       val v = Val(3)
 
-      v() should equal(3)
+      v() shouldEqual 3
     }
 
     scenario("toVal") {
@@ -51,18 +51,18 @@ class ValTest extends FeatureSpec with Matchers {
       v addListener listener2
 
       v() = 4
-      evidence should equal(v)
-      count should equal(2)
+      evidence shouldEqual v
+      count shouldEqual 2
 
       v removeListener listener1
       v() = 5
-      evidence should equal(v)
-      count should equal(3)
+      evidence shouldEqual v
+      count shouldEqual 3
 
       v removeListener listener2
       v() = 6
-      evidence should equal(v)
-      count should equal(3)
+      evidence shouldEqual v
+      count shouldEqual 3
     }
   }
 
@@ -81,13 +81,13 @@ class ValTest extends FeatureSpec with Matchers {
       }
 
       v() = 4
-      oldValue should equal(3)
-      newValue should equal(4)
+      oldValue shouldEqual 3
+      newValue shouldEqual 4
 
       obs dispose ()
 
       v() = 5
-      newValue should equal(4)
+      newValue shouldEqual 4
     }
   }
 
@@ -106,11 +106,11 @@ class ValTest extends FeatureSpec with Matchers {
       }
 
       v() = 4
-      oldValue should equal(3)
-      newValue should equal(4)
+      oldValue shouldEqual 3
+      newValue shouldEqual 4
 
       v() = 5
-      newValue should equal(4)
+      newValue shouldEqual 4
     }
   }
 
@@ -125,12 +125,12 @@ class ValTest extends FeatureSpec with Matchers {
       val obs = v onValue { value = _ }
 
       v() = 4
-      value should equal(4)
+      value shouldEqual 4
 
       obs dispose ()
 
       v() = 5
-      value should equal(4)
+      value shouldEqual 4
     }
   }
 
@@ -145,10 +145,10 @@ class ValTest extends FeatureSpec with Matchers {
       val obs = v onValueOnce { value = _ }
 
       v() = 4
-      value should equal(4)
+      value shouldEqual 4
 
       v() = 5
-      value should equal(4)
+      value shouldEqual 4
     }
   }
 
@@ -160,11 +160,11 @@ class ValTest extends FeatureSpec with Matchers {
 
       val w = v map (_ + 1)
 
-      w() should equal(4)
+      w() shouldEqual 4
 
       v() = 5
 
-      w() should equal(6)
+      w() shouldEqual 6
 
     }
 
@@ -176,7 +176,7 @@ class ValTest extends FeatureSpec with Matchers {
 
       w()
 
-      w() should equal(Some("foo"))
+      w() shouldEqual Some("foo")
     }
 
   }
@@ -193,19 +193,19 @@ class ValTest extends FeatureSpec with Matchers {
 
       val z = x.flatten
 
-      z() should equal(3)
+      z() shouldEqual 3
 
       v() = 4
 
-      z() should equal(4)
+      z() shouldEqual 4
 
       x() = w
 
-      z() should equal(100)
+      z() shouldEqual 100
 
       w() = 101
 
-      z() should equal(101)
+      z() shouldEqual 101
     }
   }
 
@@ -217,11 +217,11 @@ class ValTest extends FeatureSpec with Matchers {
 
       val w = v filter (_ < 10)
 
-      w() should equal(Some(3))
+      w() shouldEqual Some(3)
 
       v() = 15
 
-      w() should equal(None)
+      w() shouldEqual None
     }
   }
 
@@ -239,7 +239,7 @@ class ValTest extends FeatureSpec with Matchers {
 
       sip setValue 4
 
-      value should equal(4)
+      value shouldEqual 4
     }
 
     scenario("tuple") {
@@ -259,11 +259,11 @@ class ValTest extends FeatureSpec with Matchers {
 
       val packed = (a, b).pack
 
-      packed() should equal((3, 4))
+      packed() shouldEqual (3, 4)
 
       a() = 5
 
-      packed() should equal((5, 4))
+      packed() shouldEqual (5, 4)
     }
   }
 

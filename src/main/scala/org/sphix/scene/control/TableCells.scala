@@ -36,6 +36,7 @@ trait TableCells[S] {
   trait TextFieldCell[T] extends cell.TextFieldTableCell[S, T]
   trait CheckBoxCell[T] extends cell.CheckBoxTableCell[S, T]
   trait DatePickerCell extends cell.DatePickerTableCell[S]
+  trait HyperlinkCell[T] extends TableCell[S, T] with cell.HyperlinkCell[T]
 }
 
 trait ColumnCells[S, T] {

@@ -30,16 +30,16 @@ class ObservableTest extends FeatureSpec with Matchers {
 
       o() = 4
 
-      evidence should equal(o)
-      count should equal(2)
+      evidence shouldEqual o
+      count shouldEqual 2
 
       o removeListener listener1
       o() = 5
-      count should equal(3)
+      count shouldEqual 3
 
       o removeListener listener2
       o() = 6
-      count should equal(3)
+      count shouldEqual 3
     }
     
     scenario("tuple") {
@@ -61,21 +61,21 @@ class ObservableTest extends FeatureSpec with Matchers {
 
       o1() = 4
       
-      evidence should equal(o1)
-      count should equal(2)
+      evidence shouldEqual o1
+      count shouldEqual 2
 
       o2() = 4
       
-      evidence should equal(o2)
-      count should equal(4)
+      evidence shouldEqual o2
+      count shouldEqual 4
       
       (o1, o2) removeListener listener1
       o1() = 5
-      count should equal(5)
+      count shouldEqual 5
 
       (o1, o2) removeListener listener2
       o2() = 6
-      count should equal(5)
+      count shouldEqual 5
     }
 
     scenario("seq") {
@@ -99,21 +99,21 @@ class ObservableTest extends FeatureSpec with Matchers {
 
       o1() = 4
       
-      evidence should equal(o1)
-      count should equal(2)
+      evidence shouldEqual o1
+      count shouldEqual 2
 
       o2() = 4
       
-      evidence should equal(o2)
-      count should equal(4)
+      evidence shouldEqual o2
+      count shouldEqual 4
       
       os removeListener listener1
       o1() = 5
-      count should equal(5)
+      count shouldEqual 5
 
       os removeListener listener2
       o2() = 6
-      count should equal(5)      
+      count shouldEqual 5      
     }
   }
 
@@ -132,12 +132,12 @@ class ObservableTest extends FeatureSpec with Matchers {
       }
 
       o() = 4
-      evidence should equal(o)
-      count should equal(1)
+      evidence shouldEqual o
+      count shouldEqual 1
 
       obs dispose ()
       o() = 5
-      count should equal(1)
+      count shouldEqual 1
     }
 
     scenario("tuple") {
@@ -153,20 +153,20 @@ class ObservableTest extends FeatureSpec with Matchers {
       }
 
       o1() = 4
-      evidence should equal(o1)
-      count should equal(1)
+      evidence shouldEqual o1
+      count shouldEqual 1
 
       o2() = 4
-      evidence should equal(o2)
-      count should equal(2)
+      evidence shouldEqual o2
+      count shouldEqual 2
 
       obs dispose ()
 
       o1() = 5
-      count should equal(2)
+      count shouldEqual 2
 
       o2() = 5
-      count should equal(2)
+      count shouldEqual 2
     }
   }
 
@@ -185,11 +185,11 @@ class ObservableTest extends FeatureSpec with Matchers {
       }
 
       o() = 4
-      evidence should equal(o)
-      count should equal(1)
+      evidence shouldEqual o
+      count shouldEqual 1
 
       o() = 5
-      count should equal(1)
+      count shouldEqual 1
     }
     
     scenario("tuple") {
@@ -205,11 +205,11 @@ class ObservableTest extends FeatureSpec with Matchers {
       }
 
       o1() = 4
-      evidence should equal(o1)
-      count should equal(1)
+      evidence shouldEqual o1
+      count shouldEqual 1
 
       o2() = 5
-      count should equal(1)      
+      count shouldEqual 1      
     }
   }
 
@@ -225,11 +225,11 @@ class ObservableTest extends FeatureSpec with Matchers {
       }
 
       o() = 4
-      count should equal(1)
+      count shouldEqual 1
 
       obs dispose ()
       o() = 5
-      count should equal(1)
+      count shouldEqual 1
 
     }
 
@@ -243,18 +243,18 @@ class ObservableTest extends FeatureSpec with Matchers {
       }
 
       o1() = 4
-      count should equal(1)
+      count shouldEqual 1
 
       o2() = 4
-      count should equal(2)
+      count shouldEqual 2
 
       obs dispose ()
 
       o1() = 5
-      count should equal(2)
+      count shouldEqual 2
 
       o2() = 5
-      count should equal(2)
+      count shouldEqual 2 
 
     }
   }
@@ -271,10 +271,10 @@ class ObservableTest extends FeatureSpec with Matchers {
       }
 
       o() = 4
-      count should equal(1)
+      count shouldEqual 1
 
       o() = 5
-      count should equal(1)
+      count shouldEqual 1
     }
     
     scenario("tuple") {
@@ -287,10 +287,10 @@ class ObservableTest extends FeatureSpec with Matchers {
       }
 
       o1() = 4
-      count should equal(1)
+      count shouldEqual 1
 
       o2() = 5
-      count should equal(1)      
+      count shouldEqual 1      
     }
   }
 
@@ -301,10 +301,10 @@ class ObservableTest extends FeatureSpec with Matchers {
       val o = Var(3)
 
       val v = o(_())
-      v() should equal(3)
+      v() shouldEqual 3
 
       o() = 4
-      v() should equal(4)
+      v() shouldEqual 4
     }
 
     scenario("tuple") {
@@ -313,13 +313,13 @@ class ObservableTest extends FeatureSpec with Matchers {
 
       val v = (o1, o2)(_() + _())
 
-      v() should equal(6)
+      v() shouldEqual 6
 
       o1() = 4
-      v() should equal(7)
+      v() shouldEqual 7
 
       o2() = 4
-      v() should equal(8)
+      v() shouldEqual 8
     }
   }
 
@@ -336,12 +336,12 @@ class ObservableTest extends FeatureSpec with Matchers {
       }
 
       p setValue "goodbye"
-      count should equal(1)
+      count shouldEqual 1
 
       obs dispose ()
 
       p setValue "hello again"
-      count should equal(1)
+      count shouldEqual 1
     }
 
     scenario("tuple") {
@@ -357,13 +357,13 @@ class ObservableTest extends FeatureSpec with Matchers {
 
       p setValue "goodbye"
       q setValue "bye"
-      count should equal(2)
+      count shouldEqual 2
 
       obs dispose ()
 
       p setValue "hello again"
       q setValue "hi again"
-      count should equal(2)
+      count shouldEqual 2
     }
   }
 

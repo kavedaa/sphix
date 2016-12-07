@@ -6,8 +6,10 @@ version := "0.1-SNAPSHOT"
 
 scalaVersion := "2.11.5"
 
+crossScalaVersions := Seq("2.11.8", "2.12.1")
+
 libraryDependencies += "org.controlsfx" % "controlsfx" % "8.40.10"
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 
 scalacOptions in (Compile,doc) ++= Seq("-diagrams")
