@@ -10,12 +10,15 @@ import javafx.scene.image.ImageView
 import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.control.Tooltip
+
 import org.sphix.util._
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.time._
 import java.time.format.DateTimeFormatter
 import javafx.scene.control.Hyperlink
+
+import scala.util._
 
 trait Cell[T] extends javafx.scene.control.Cell[T] {
 
@@ -135,16 +138,16 @@ trait EditableBooleanImageCell extends BooleanImageCell {
 
 trait TooltipCell[T] extends Cell[T] {
 
-  def text(item: T): String
+//  def text(item: T): String
   def tooltipText(item: T): Option[String]
 
   lazy val tooltip = new Tooltip
-  lazy val label = new Label
+//  lazy val label = new Label
 
   override def onUpdate(item: T) {
     super.onUpdate(item)
-    label setText (text(item) replaceAll ("[\n\r]", " "))
-    setGraphic(label)
+//    label setText (text(item) replaceAll ("[\n\r]", " "))
+//    setGraphic(label)
     tooltipText(item) map { t =>
       tooltip setText t
       setTooltip(tooltip)
@@ -177,17 +180,37 @@ trait DateOptionCell extends TextCell[Option[java.util.Date]] {
 
 trait LocalDateCell extends TextCell[LocalDate] {
   def formatter: DateTimeFormatter
-  def text(ldt: LocalDate) = formatter format ldt
+  def text(ld: LocalDate) = formatter format ld
 }
 
 trait LocalDateOptionCell extends TextCell[Option[LocalDate]] {
   def formatter: DateTimeFormatter
-  def text(ldt: Option[LocalDate]) = ldt map formatter.format getOrElse ""
+  def text(ld: Option[LocalDate]) = ld map formatter.format getOrElse ""
+}
+
+trait LocalDateTryCell extends TextCell[Try[LocalDate]] {
+  def formatter: DateTimeFormatter
+  def text(ld: Try[LocalDate]) = ld match {
+    case Success(x) => success(x)
+    case Failure(ex) => failure(ex)
+  }
+  def success(x: LocalDate) = formatter format x
+  def failure(ex: Throwable) = ex.getMessage
 }
 
 trait LocalDateTimeCell extends TextCell[LocalDateTime] {
   def formatter: DateTimeFormatter
   def text(ldt: LocalDateTime) = formatter format ldt
+}
+
+trait LocalDateTimeTryCell extends TextCell[Try[LocalDateTime]] {
+  def formatter: DateTimeFormatter
+  def text(ldt: Try[LocalDateTime]) = ldt match {
+    case Success(x) => success(x)
+    case Failure(ex) => failure(ex)
+  }
+  def success(x: LocalDateTime) = formatter format x
+  def failure(ex: Throwable) = ex.getMessage
 }
 
 trait LocalDateTimeOptionCell extends TextCell[Option[LocalDateTime]] {

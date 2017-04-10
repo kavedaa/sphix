@@ -34,7 +34,7 @@ package object util {
     def call(a: A) = f(a)
   }
 
-  implicit def consumer[A](f: A => Unit) = new Consumer[A] {
+  implicit def consumer[A, U](f: A => U) = new Consumer[A] {
     def accept(a: A) = f(a)
   }
   

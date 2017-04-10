@@ -4,14 +4,19 @@ import javafx.scene.control.TableColumn
 import javafx.scene.control.TableCell
 import javafx.scene.image.Image
 import javafx.scene.Node
+
 import org.sphix.util.RightConverter
 import javafx.beans.property.Property
 import java.text._
 import java.time._
 import java.time.format.DateTimeFormatter
+
 import org.sphix.util.DefaultConverter
 import javafx.geometry.Pos
+
 import org.sphix.collection.ObservableSeq
+
+import scala.util.Try
 
 trait TableCells[S] {
 
@@ -132,8 +137,8 @@ trait ColumnCells[S, T] {
   trait TooltipCell extends TableCell[S, T] with cell.TooltipCell[T]
 
   object TooltipCell {
-    def apply(text0: T => String, tooltip0: T => Option[String]) = new TooltipCell {
-      def text(item: T) = text0(item)
+    def apply(tooltip0: T => Option[String]) = new TooltipCell {
+//      def text(item: T) = text0(item)
       def tooltipText(item: T) = tooltip0(item)
     }
   }
@@ -170,6 +175,7 @@ trait ColumnCells[S, T] {
 
   trait LocalDateCell extends TableCell[S, LocalDate] with cell.LocalDateCell
   trait LocalDateOptionCell extends TableCell[S, Option[LocalDate]] with cell.LocalDateOptionCell
+  trait LocalDateTryCell extends TableCell[S, Try[LocalDate]] with cell.LocalDateTryCell
 
   object LocalDateCell {
     def apply(formatter0: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE) =
@@ -185,8 +191,16 @@ trait ColumnCells[S, T] {
       }
   }
 
+  object LocalDateTryCell {
+    def apply(formatter0: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE) =
+      new LocalDateTryCell {
+        def formatter = formatter0
+      }
+  }
+
   trait LocalDateTimeCell extends TableCell[S, LocalDateTime] with cell.LocalDateTimeCell
   trait LocalDateTimeOptionCell extends TableCell[S, Option[LocalDateTime]] with cell.LocalDateTimeOptionCell
+  trait LocalDateTimeTryCell extends TableCell[S, Try[LocalDateTime]] with cell.LocalDateTimeTryCell
 
   object LocalDateTimeCell {
     def apply(formatter0: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME) =
@@ -198,6 +212,13 @@ trait ColumnCells[S, T] {
   object LocalDateTimeOptionCell {
     def apply(formatter0: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME) =
       new LocalDateTimeOptionCell {
+        def formatter = formatter0
+      }
+  }
+
+  object LocalDateTimeTryCell {
+    def apply(formatter0: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME) =
+      new LocalDateTimeTryCell {
         def formatter = formatter0
       }
   }
