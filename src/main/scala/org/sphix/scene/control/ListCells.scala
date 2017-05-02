@@ -48,4 +48,7 @@ trait ListCells[T] {
     }
   }
 
+  trait TooltipCell extends cell.TooltipCell[T]
+
+
 }

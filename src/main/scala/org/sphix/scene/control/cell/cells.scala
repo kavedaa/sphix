@@ -239,3 +239,13 @@ trait HyperlinkCell[T] extends Cell[T] {
     }
   }
 }
+
+trait ProxyCell[T, U] extends Cell[T] {
+
+  def underlying: Cell[U]
+
+  def f: T => U
+
+  override def onUpdate(item: T) = underlying onUpdate f(item)
+
+}

@@ -266,4 +266,7 @@ trait ColumnCells[S, T] {
       def formatter = formatter0
     }
   }
+
+  trait ProxyCell[U] extends TableCell[S, T] with cell.ProxyCell[T, U]
+
 }
