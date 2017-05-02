@@ -163,6 +163,12 @@ object Val {
     }
   }
 
+  implicit class OVTuple10[A1, A2, A3, A4, A5, A6, A7, A8, A9, A10](val t: (OV[A1], OV[A2], OV[A3], OV[A4], OV[A5], OV[A6], OV[A7], OV[A8], OV[A9], OV[A10])) {
+    def map[B](f: (A1, A2, A3, A4, A5, A6, A7, A8, A9, A10) => B): Func[B] = new Func[B](t._1, t._2, t._3, t._4, t._5, t._6, t._7, t._8, t._9, t._10) {
+      def compute = f(t._1(), t._2(), t._3(), t._4(), t._5(), t._6(), t._7(), t._8(), t._9(), t._10())
+    }
+  }
+
   //	And so on...
 }
 
