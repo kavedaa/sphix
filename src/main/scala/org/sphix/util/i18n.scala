@@ -8,9 +8,9 @@ import java.text.MessageFormat
 
 trait I18n {
 
-  def cls: Class[_]
+  def basename: String
 
-  private def bundle(locale: Locale) = ResourceBundle getBundle (cls.getName, locale)
+  private def bundle(locale: Locale) = ResourceBundle getBundle (basename, locale)
 
   private def value(key: String, locale: Locale) =
     Try { bundle(locale) getString key } getOrElse key
