@@ -50,5 +50,6 @@ trait ListCells[T] {
 
   trait TooltipCell extends cell.TooltipCell[T]
 
+  trait HyperlinkCell extends cell.HyperlinkCell[T]
 
 }
