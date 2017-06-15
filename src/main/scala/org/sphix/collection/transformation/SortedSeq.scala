@@ -5,13 +5,15 @@ import javafx.beans.value.ObservableValue
 import javafx.collections.transformation.SortedList
 import javafx.collections.ObservableList
 
-class SortedSeq[A](source: ObservableSeq[A], comparator: ObservableValue[java.util.Comparator[A]])
+class SortedSeq[A](source: ObservableSeq[A])
   extends ObservableSeq[A] {
 
   protected val observableList = new SortedList(source)
 
-  observableList.comparatorProperty bind comparator
-  
+  def setComparator(comparator: ObservableValue[java.util.Comparator[A]]) = {
+    observableList.comparatorProperty bind comparator
+  }
+
   def toObservableList = observableList
 }
 
