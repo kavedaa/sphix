@@ -6,7 +6,8 @@ import javafx.scene.control._
 import org.sphix.util._
 import javafx.util.Callback
 
-trait CellCopyable { this: TableView[_] =>
+trait CellCopyable {
+  this: TableView[_] =>
 
   getSelectionModel setSelectionMode SelectionMode.MULTIPLE
   getSelectionModel setCellSelectionEnabled true
@@ -19,13 +20,44 @@ trait CellCopyable { this: TableView[_] =>
   }
 
   /**
-   *  Copies the text in all selected cells in tab-separated format to the clipboard.
-   */
-  def copyTableSelectionToClipboard() = {
+    * Copies the text in all selected cells in tab-separated format to the clipboard.
+    */
+  def copyTableSelectionToClipboard(): Unit = {
+    val formatted = tableSelectionTextMatrix map (_ mkString "\t") mkString "\n"
+    val clipboardContent = new ClipboardContent
+    clipboardContent putString formatted
+    Clipboard.getSystemClipboard setContent clipboardContent
+  }
+
+  /**
+    * Copies the text in all selected cells in semicolon-separated format to the clipboard.
+    */
+  def copyTableSelectionAsLineToClipboard(): Unit = {
+    val formatted = tableSelectionTextMatrix.flatten mkString "; "
+    val clipboardContent = new ClipboardContent
+    clipboardContent putString formatted
+    Clipboard.getSystemClipboard setContent clipboardContent
+  }
+
+
+  /**
+    * Reads text contents out of all selected cells.
+    */
+  def tableSelectionTextMatrix: Seq[Seq[String]] = {
+
+    def linearColumns(columns: Seq[TableColumn[_, _]]) =
+      columns flatMap childColumns
+
+    def childColumns(column: TableColumn[_, _]): Seq[TableColumn[_, _]] =
+      column.getColumns match {
+        case xs if xs.isEmpty => Seq(column)
+        case xs => xs flatMap childColumns
+      }
+
     val cells = getSelectionModel.getSelectedCells
     val rows = cells groupBy (_.getRow)
     val matrix = rows.toSeq sortBy (_._1) map (_._2 sortBy (_.getColumn))
-    val data = matrix map { row =>
+    matrix map { row =>
       row map { tp =>
         val columns = getColumns
         val dataColumns = linearColumns(columns)
@@ -41,27 +73,15 @@ trait CellCopyable { this: TableView[_] =>
             if (text == null) {
               c.getGraphic match {
                 case l: Labeled => l.getText
-                case _          => ""
+                case _ => ""
               }
             }
             else text
           case _ =>
             data.toString
         }
-      } mkString "\t"
-    } mkString "\n"
-    val clipboardContent = new ClipboardContent
-    clipboardContent putString data
-    Clipboard.getSystemClipboard setContent clipboardContent
-  }
-
-  private def linearColumns(columns: Seq[TableColumn[_, _]]) =
-    columns flatMap childColumns
-
-  private def childColumns(column: TableColumn[_, _]): Seq[TableColumn[_, _]] =
-    column.getColumns match {
-      case xs if xs.isEmpty => Seq(column)
-      case xs               => xs flatMap childColumns
+      }
     }
+  }
 
 }

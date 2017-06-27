@@ -11,6 +11,7 @@ class SortedSeq[A](source: ObservableSeq[A])
   protected val observableList = new SortedList(source)
 
   def setComparator(comparator: ObservableValue[java.util.Comparator[A]]) = {
+    observableList.comparatorProperty unbind()
     observableList.comparatorProperty bind comparator
   }
 
