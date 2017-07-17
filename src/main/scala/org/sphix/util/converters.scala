@@ -89,3 +89,11 @@ object DateOptionConverter {
     def dateFormat = df
   }
 }
+
+
+object JfxStringConverter {
+  def apply[A](convert: A => String) = new javafx.util.StringConverter[A] {
+    def toString(a: A): String = convert(a)
+    def fromString(string: String): A = ???
+  }
+}

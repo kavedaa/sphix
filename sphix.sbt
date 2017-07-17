@@ -4,9 +4,9 @@ organization := "org.sphix"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.11.8"
 
-crossScalaVersions := Seq("2.11.8", "2.12.1")
+crossScalaVersions := Seq("2.11.8", "2.12.2")
 
 libraryDependencies += "org.controlsfx" % "controlsfx" % "8.40.10"
 
