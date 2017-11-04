@@ -50,6 +50,11 @@ object SeqFunc {
     new SeqFunc[R](o1, o2, o3) {
       def compute = f(o1, o2, o3)
     }
-  
+
+  def apply[T1 <: O, T2 <: O, T3 <: O, T4 <: O, R](o1: T1, o2: T2, o3: T3, o4: T4)(f: (T1, T2, T3, T4) => Seq[R]) =
+    new SeqFunc[R](o1, o2, o3, o4) {
+      def compute = f(o1, o2, o3, o4)
+    }
+
   //	And so on...
 }
