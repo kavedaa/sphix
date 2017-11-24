@@ -1,17 +1,17 @@
 package org.sphix.dialog
 
+import java.time.LocalDate
+
 import org.sphix.util.RightConverter
 import javafx.scene.control._
 import javafx.scene.layout._
-import org.sphix.Var._
-import javafx.event.ActionEvent
+
 import org.sphix.collection.ObservableSeq
 import javafx.scene.Node
-import javafx.util.Callback
-import org.sphix.util._
-import org.sphix.collection.mutable.ObservableBuffer
+
 import javafx.scene.control.Dialog
 import javafx.scene.control.ButtonBar.ButtonData
+
 import org.sphix.Var._
 import org.sphix.util._
 
@@ -146,4 +146,25 @@ class PasswordDialog(title: String, inputTitle: String, authenticator: String =>
     val res = showAndWait()
     if (res.isPresent) res.get else false
   }
+}
+
+class DatePickerDialog(title: String, date0: Option[LocalDate] = None) extends Dialog[LocalDate] {
+
+  val picker = new DatePicker
+
+  date0 foreach picker.setValue
+
+  setTitle(title)
+  setResizable(false)
+  getDialogPane setContent picker
+
+  val okButtonType = new ButtonType("OK", ButtonData.OK_DONE)
+
+  getDialogPane.getButtonTypes addAll (ButtonType.CANCEL, okButtonType)
+
+  setResultConverter { (dialogButton: ButtonType) =>
+    if (dialogButton == okButtonType) picker.getValue
+    else null
+  }
+
 }
