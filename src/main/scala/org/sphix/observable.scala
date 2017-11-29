@@ -101,6 +101,21 @@ trait ObservableImplicits {
       def compute = f(t._1, t._2, t._3)
     }
   }
+
+  implicit class Observable4[O1 <: JFXO, O2 <: JFXO, O3 <: JFXO, O4 <: JFXO](val t: (O1, O2, O3, O4)) extends TupleObservable {
+
+    def apply[A](f: (O1, O2, O3, O4) => A) = new Func[A](t._1, t._2, t._3, t._4) {
+      def compute = f(t._1, t._2, t._3, t._4)
+    }
+  }
+
+  implicit class Observable5[O1 <: JFXO, O2 <: JFXO, O3 <: JFXO, O4 <: JFXO, O5 <: JFXO](val t: (O1, O2, O3, O4, O5)) extends TupleObservable {
+
+    def apply[A](f: (O1, O2, O3, O4, O5) => A) = new Func[A](t._1, t._2, t._3, t._4, t._5) {
+      def compute = f(t._1, t._2, t._3, t._4, t._5)
+    }
+  }
+
   //	And so on...
 
   implicit class SeqObservable(val observables: Seq[JFXO]) extends PluralObservable
