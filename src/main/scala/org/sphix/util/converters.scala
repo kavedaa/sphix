@@ -62,8 +62,18 @@ class BigDecimalConverter(dcf: DecimalFormat) extends RightConverter[BigDecimal,
   def deconvert(b: String) = Try((dcf parse b).asInstanceOf[java.math.BigDecimal]: BigDecimal).toOption
 }
 
+class BigDecimalOptionConverter(dcf: DecimalFormat) extends RightConverter[Option[BigDecimal], String] {
+  dcf setParseBigDecimal true
+  def convert(a: Option[BigDecimal]) = a map dcf.format getOrElse ""
+  def deconvert(b: String) = if (b.isEmpty) Some(None) else Try(Some((dcf parse b).asInstanceOf[java.math.BigDecimal]: BigDecimal)).toOption
+}
+
 object BigDecimalConverter {
   def apply(dcf: DecimalFormat) = new BigDecimalConverter(dcf)
+}
+
+object BigDecimalOptionConverter {
+  def apply(dcf: DecimalFormat) = new BigDecimalOptionConverter(dcf)
 }
 
 trait DateConverter extends RightConverter[java.util.Date, String] {
