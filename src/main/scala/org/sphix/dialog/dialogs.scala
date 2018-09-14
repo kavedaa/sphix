@@ -129,6 +129,32 @@ class CheckBoxesDialog[T](title: String, inputTitle: String, values: Seq[T], sel
   }
 }
 
+class RadioDialog[T](title: String, inputTitle: String, values: Seq[T], selected: Option[T])(render: T => String)
+  extends InputDialog[Option[T], VBox](new VBox(10), title, inputTitle, ContentDisplay.BOTTOM) {
+
+  val group = new ToggleGroup
+
+  val cbs = values map { v =>
+    v -> new RadioButton(render(v)) {
+      setToggleGroup(group)
+      setSelected(selected contains v)
+    }
+  }
+
+  inputControl.getChildren setAll (cbs.to[ObservableSeq] map (_._2))
+
+  setResultConverter { (dialogButton: ButtonType) =>
+    if (dialogButton == okButtonType) cbs.filter(_._2.isSelected).headOption map (_._1)
+    else null
+  }
+
+  def input(): Option[T] = {
+    inputControl requestFocus ()
+    val res = showAndWait()
+    if (res.isPresent) res.get else None
+  }
+}
+
 class PasswordDialog(title: String, inputTitle: String, authenticator: String => Boolean)
   extends InputDialog[Boolean, PasswordField](new PasswordField, title, inputTitle, ContentDisplay.BOTTOM) {
 

@@ -4,7 +4,7 @@ organization := "org.sphix"
 
 version := "0.1-SNAPSHOT"
 
-scalaVersion := "2.11.8"
+scalaVersion in ThisBuild := "2.11.11"
 
 crossScalaVersions := Seq("2.11.8", "2.12.2")
 
