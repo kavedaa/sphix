@@ -64,6 +64,13 @@ trait GraphicCell[T] extends Cell[T] {
   }
 }
 
+trait StringOptionCell extends TextCell[Option[String]] {
+  def text(item: Option[String]) = item match {
+    case Some(s) => s
+    case None => ""
+  }
+}
+
 trait StyleCell[T] extends Cell[T] {
 
   def style(item: T): String

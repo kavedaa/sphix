@@ -22,6 +22,7 @@ trait TableCells[S] {
 
   trait TextCell[T] extends TableCell[S, T] with cell.TextCell[T]
   trait GraphicCell[T] extends TableCell[S, T] with cell.GraphicCell[T]
+  trait StringOptionCell extends TableCell[S, Option[String]] with cell.StringOptionCell
   trait AlignedCell[T] extends TableCell[S, T]
   trait ImageCell[T] extends TableCell[S, T] with cell.ImageCell[T]
   trait BooleanTextCell extends TableCell[S, Boolean] with cell.BooleanTextCell
@@ -52,6 +53,12 @@ trait ColumnCells[S, T] {
     def apply(text0: T => String) = new TextCell {
       def text(item: T) = text0(item)
     }
+  }
+
+  trait StringOptionCell extends TableCell[S, Option[String]] with cell.StringOptionCell
+
+  object StringOptionCell {
+    def apply() = new StringOptionCell {}
   }
 
   trait StripNewLines extends TableCell[S, T] with cell.StripNewLines[T]
