@@ -1,12 +1,9 @@
 *.class
 *.bak
 *.log
-*.properties
-nat-reg-db.properties
-patricia-db.properties
-portal-db.properties
-mail.conf
-logback.xml
+
+.metals
+.bloop
 
 # sbt specific
 .cache-main

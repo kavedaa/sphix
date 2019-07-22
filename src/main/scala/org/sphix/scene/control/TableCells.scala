@@ -41,6 +41,7 @@ trait TableCells[S] {
   trait CSSCell[T] extends TableCell[S, T] with cell.CSSTableCell[S, T]
   trait TextFieldCell[T] extends cell.TextFieldTableCell[S, T]
   trait CheckBoxCell[T] extends cell.CheckBoxTableCell[S, T]
+  trait TriStateCheckBoxCell[T] extends cell.TriStateCheckBoxTableCell[S, T]
   trait DatePickerCell extends cell.DatePickerTableCell[S]
   trait HyperlinkCell[T] extends TableCell[S, T] with cell.HyperlinkCell[T]
 }

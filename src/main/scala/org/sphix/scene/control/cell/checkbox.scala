@@ -43,3 +43,44 @@ object CheckBoxTableCell {
     }
   }
 }
+
+trait TriStateCheckBoxTableCell[S, T] extends TableCell[S, T] {
+
+  def checked(s: S): Property[Boolean]
+  def indeterminate(s: S): Property[Boolean]
+  
+  lazy val checkbox = new CheckBox {
+    setAllowIndeterminate(true)
+  }  
+  
+  setAlignment(Pos.CENTER)
+
+  var dataChecked = Var[java.lang.Boolean](false)
+  var dataIndeterminate = Var[java.lang.Boolean](false)
+
+  override def updateItem(cellItem: T, empty: Boolean) {
+    super.updateItem(cellItem, empty)
+    if (!empty) {
+      setGraphic(checkbox)
+      checkbox.selectedProperty unbindBidirectional dataChecked
+      checkbox.indeterminateProperty unbindBidirectional dataIndeterminate
+      val rowItem = getTableView.getItems get getIndex
+      dataChecked = checked(rowItem).convert[java.lang.Boolean]
+      dataIndeterminate = indeterminate(rowItem).convert[java.lang.Boolean]
+      checkbox.selectedProperty bindBidirectional dataChecked
+      checkbox.indeterminateProperty bindBidirectional dataIndeterminate
+    }
+    else {
+      setGraphic(null)
+    }
+  }
+}
+
+object TriStateCheckBoxTableCell {
+  def apply[S, T](checked0: S => Property[Boolean], indeterminate0: S => Property[Boolean]) = new Callback[TableColumn[S, T], TableCell[S, T]] {
+    def call(c: TableColumn[S, T]) = new TriStateCheckBoxTableCell[S, T] {
+      def checked(s: S) = checked0(s)
+      def indeterminate(s: S) = indeterminate0(s)
+    }
+  }
+}
