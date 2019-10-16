@@ -232,6 +232,9 @@ trait HyperlinkCell[T] extends Cell[T] {
 
   lazy val hyperlink = new Hyperlink
 
+  //  TODO there's a bug when combining this with ImageCell
+  //  in some scenarios the image is not displayed
+
   override def onUpdate(item: T) = {
     super.onUpdate(item)
     if (isHyperlink(item)) {
