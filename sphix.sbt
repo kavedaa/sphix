@@ -2,9 +2,9 @@ name := "sphix"
 
 organization := "org.sphix"
 
-version := "0.1.2"
+version := "0.1.3"
 
-scalaVersion := "2.12.10"
+scalaVersion := "2.12.12"
 
 crossScalaVersions := Seq("2.11.12", "2.12.10")
 
