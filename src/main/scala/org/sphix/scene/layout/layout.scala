@@ -15,5 +15,5 @@ class HBox(spacing: Double, padding: Double)(children: Node*) extends javafx.sce
   
   setAlignment(Pos.CENTER)
   
-  getChildren addAll children.to[ObservableSeq]
+  getChildren addAll children.to(ObservableSeq)
 }

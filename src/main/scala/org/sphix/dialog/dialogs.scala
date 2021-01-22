@@ -59,7 +59,7 @@ class TextFieldDialog[T](converter: RightConverter[T, String], title: String, in
 
   def input(initValue: Option[T] = None) = {
     initValue foreach (v => inputControl setText (converter convert v))
-    inputControl requestFocus ()
+    inputControl.requestFocus()
     val res = showAndWait()
     if (res.isPresent) res.get else None
   }
@@ -75,7 +75,7 @@ class TextAreaDialog(title: String, inputTitle: String)
 
   def input(initValue: Option[String] = None) = {
     initValue foreach (v => inputControl setText v)
-    inputControl requestFocus ()
+    inputControl.requestFocus()
     val res = showAndWait()
     if (res.isPresent) Some(res.get) else None
   }
@@ -98,9 +98,10 @@ class ComboBoxDialog[T](cellFactory: => ListCell[T], title: String, inputTitle: 
   }
 
   def input(items: Iterable[T], initValue: Option[T] = None) = {
-    inputControl setItems items.to[ObservableSeq]
+    val xs = items.to(ObservableSeq)
+    inputControl setItems xs //  TODO why we need this??
     initValue foreach (v => inputControl.getSelectionModel select v)
-    inputControl requestFocus ()
+    inputControl.requestFocus()
     val res = showAndWait()
     if (res.isPresent) res.get else None
   }
@@ -115,7 +116,8 @@ class CheckBoxesDialog[T](title: String, inputTitle: String, values: Seq[T], sel
     }
   }
 
-  inputControl.getChildren setAll (cbs.to[ObservableSeq] map (_._2))
+  val xs = (cbs.map (_._2).to(ObservableSeq))   //  TODO why we need this??
+  inputControl.getChildren setAll xs
 
   setResultConverter { (dialogButton: ButtonType) =>
     if (dialogButton == okButtonType) cbs filter (_._2.isSelected) map (_._1)
@@ -123,7 +125,7 @@ class CheckBoxesDialog[T](title: String, inputTitle: String, values: Seq[T], sel
   }
 
   def input(): Option[Seq[T]] = {
-    inputControl requestFocus ()
+    inputControl.requestFocus()
     val res = showAndWait()
     if (res.isPresent) Some(res.get) else None
   }
@@ -141,7 +143,8 @@ class RadioDialog[T](title: String, inputTitle: String, values: Seq[T], selected
     }
   }
 
-  inputControl.getChildren setAll (cbs.to[ObservableSeq] map (_._2))
+  val xs = (cbs.map (_._2).to(ObservableSeq))   //  TODO why we need this??
+  inputControl.getChildren setAll xs
 
   setResultConverter { (dialogButton: ButtonType) =>
     if (dialogButton == okButtonType) cbs.filter(_._2.isSelected).headOption map (_._1)
@@ -149,7 +152,7 @@ class RadioDialog[T](title: String, inputTitle: String, values: Seq[T], selected
   }
 
   def input(): Option[T] = {
-    inputControl requestFocus ()
+    inputControl.requestFocus()
     val res = showAndWait()
     if (res.isPresent) res.get else None
   }
@@ -168,7 +171,7 @@ class PasswordDialog(title: String, inputTitle: String, authenticator: String =>
   }
 
   def input() = {
-    inputControl requestFocus ()
+    inputControl.requestFocus()
     val res = showAndWait()
     if (res.isPresent) res.get else false
   }

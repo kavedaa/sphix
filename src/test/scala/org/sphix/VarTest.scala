@@ -100,7 +100,7 @@ class VarTest extends FeatureSpec with Matchers {
 
       p() shouldEqual 4
 
-      p unbind ()
+      p.unbind()
 
       q() = 5
 

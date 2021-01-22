@@ -1,171 +1,93 @@
 package org.sphix.collection.mutable
 
-import javafx.collections.ObservableList
-import scala.collection.mutable.Buffer
-import scala.collection.mutable.BufferLike
-import scala.collection.mutable.Builder
-import javafx.collections.FXCollections
-import scala.collection.JavaConversions
-import scala.collection.generic.SeqFactory
-import scala.collection.generic.GenericTraversableTemplate
-import org.sphix.collection.ObservableSeq
-import org.sphix.Observer
-import org.sphix.collection.Change._
-import javafx.collections.ListChangeListener
 import javafx.beans.Observable
 import javafx.util.Callback
+
+import scala.collection.SeqFactory
+import scala.collection.mutable.{ Buffer, Builder }
+import scala.jdk.CollectionConverters._
+
+import javafx.collections._
+
+import org.sphix.Observer
 
 class ObservableBuffer[A](protected val observableList: ObservableList[A])
   extends org.sphix.collection.ObservableSeq[A]
   with Buffer[A]
-  with BufferLike[A, ObservableBuffer[A]]
-  with Builder[A, ObservableBuffer[A]]
-  with GenericTraversableTemplate[A, ObservableBuffer] {
+  with scala.collection.mutable.SeqOps[A, ObservableBuffer, ObservableBuffer[A]] {
 
-  override def companion = ObservableBuffer
+  override val iterableFactory = ObservableBuffer
+  override protected def fromSpecific(coll: IterableOnce[A]) = iterableFactory.from(coll)
+  override protected def newSpecificBuilder = iterableFactory.newBuilder
+  override def empty = iterableFactory.empty[A]
 
-  private var boundTo: Option[ObservableSeq[A]] = None
+  //  Buffer implementations
 
-  val bindListener = new ListChangeListener[A] {
-    def onChanged(change: javafx.collections.ListChangeListener.Change[_ <: A]) {
-      println("observable buffer bind listener called")
-      //	TODO: this is a temporary workaround for the horrible bugs in JFX
-      observableList setAll change.getList
-
-      //      while (change.next()) {
-      //        if (change.wasAdded) {
-      //          observableList addAll(change.getFrom, change.getAddedSubList)
-      //        }
-      //        if (change.wasRemoved) {
-      //          //	workaround, possible bug i OList
-      //          change.getFrom to change.getTo foreach { n =>
-      //            observableList remove n
-      //          }
-      //        }
-      //        if (change.wasPermutated) {
-      //          //	pragmatic solution
-      //          observableList setAll change.getList
-      //        }
-      //        if (change.wasReplaced) {
-      //          // doesn't seem to be called
-      //        }
-      //        if (change.wasUpdated) {
-      //          //	not sure if best solution...note that this prob won't be called anyway
-      //          change.getFrom to change.getTo foreach { n =>
-      //            observableList set (n, change.getList get n)
-      //          }
-      //        }
-      //      }
-    }
-  }
-
-  def <==(that: ObservableSeq[A]) {
-    if (isBound) unbind()
-    boundTo = Some(that)
-    that addListener bindListener
-    this setAll that
-  }
-
-  def unbind() {
-    boundTo map { ob => ob removeListener bindListener }
-    boundTo = None
-  }
-
-  def isBound = boundTo.isDefined
-
-  def assertNotBound() = if (isBound) throw new RuntimeException("A bound buffer cannot be mutated.")
-
-  def +=(elem: A) = {
-    assertNotBound()
+  def addOne(elem: A) = {
     observableList add elem
     this
   }
 
-  def result = this
-
-  def clear() {
-    assertNotBound()
-    observableList clear ()
+  def clear() = {
+    observableList.clear()
   }
 
-  override def newBuilder = ObservableBuffer.newBuilder
+  def insert(i: Int, elem: A) = {
+    observableList.add(i, elem)
+  }
 
-  def +=:(elem: A) = {
-    assertNotBound()
+  def insertAll(n: Int, elems: IterableOnce[A]) {
+    observableList.addAll(n, elems.toIterable.asJavaCollection)
+  }
+
+  def patchInPlace(from: Int, patch: IterableOnce[A], replaced: Int) = ???
+
+  def prepend(elem: A) = {
     observableList add (0, elem)
     this
   }
 
-  def insertAll(n: Int, elems: Traversable[A]) {
-    assertNotBound()
-    observableList addAll (n, JavaConversions asJavaCollection elems.toIterable)
-  }
-
   def remove(n: Int) = {
-    assertNotBound()
     observableList remove n
   }
 
-  def update(n: Int, newElem: A) = {
-    assertNotBound()
-    observableList set (n, newElem)
+  def remove(n: Int, count: Int) {
+    observableList.subList (n, n + count).clear()
   }
 
-  def update(elems: Traversable[A]) = {
-    assertNotBound()
-    observableList setAll (JavaConversions asJavaCollection elems.toIterable)
+  def update(n: Int, elem: A) = {
+    observableList set (n, elem)
   }
 
+  def update(elems: IterableOnce[A]) = {
+    observableList setAll elems.toIterable.asJavaCollection
+  }
   
   //	Overrides to avoid element-for-element changes from default implementation
 
-  override def ++=(xs: TraversableOnce[A]) = {
-    assertNotBound()
-    observableList addAll (JavaConversions asJavaCollection xs.toIterable)
+  override def addAll(xs: IterableOnce[A]) = {
+    observableList addAll xs.toIterable.asJavaCollection
     this
   }
 
-  override def ++=:(xs: TraversableOnce[A]) = {
-    assertNotBound()
-    observableList addAll (0, JavaConversions asJavaCollection xs.toIterable)
+  override def prependAll(xs: IterableOnce[A]) = {
+    observableList.addAll(0, xs.toIterable.asJavaCollection)
     this
   }
 
-  override def +=(elem1: A, elem2: A, elems: A*) = {
-    assertNotBound()
-    observableList addAll (JavaConversions asJavaCollection (Seq(elem1, elem2) ++ elems))
+  override def subtractAll(xs: TraversableOnce[A]) = {
+    observableList removeAll xs.toIterable.asJavaCollection
     this
   }
 
-  override def --=(xs: TraversableOnce[A]) = {
-    assertNotBound()
-    observableList removeAll (JavaConversions asJavaCollection xs.toIterable)
-    this
-  }
+  //  Additional convenience methods
 
-  override def -=(elem1: A, elem2: A, elems: A*) = {
-    assertNotBound()
-    observableList removeAll (JavaConversions asJavaCollection (Seq(elem1, elem2) ++ elems))
-    this
-  }
-
-  override def remove(n: Int, count: Int) {
-    assertNotBound()
-    observableList subList (n, n + count) clear ()
-  }
-
-  // NOTE: transform() cannot avoid this due to no corresponding method on OList
-  // If this is deemed critical, either change implementation to use java.util.List as
-  // backing...or file an issue against OList.
-
-  def doSortBy[B](f: A => B)(implicit ord: math.Ordering[B]) {
-    assertNotBound()
-    FXCollections.sort[A](toObservableList, ord on f)
-  }
-
-  def doSortWith(lt: (A, A) => Boolean) {
-    assertNotBound()
-    FXCollections.sort[A](toObservableList, Ordering fromLessThan lt)
+  /**
+    *  Remove based on reference equality.
+    */
+  def removeRef(x: AnyRef) = {
+    val index = indexWhere(_.asInstanceOf[AnyRef] eq x)
+    if (index != -1) remove(index)
   }
 
   def toObservableList = observableList
@@ -173,7 +95,29 @@ class ObservableBuffer[A](protected val observableList: ObservableList[A])
 
 object ObservableBuffer extends SeqFactory[ObservableBuffer] {
 
-  def newBuilder[A] = new ObservableBuffer[A](FXCollections.observableArrayList[A])
+  private def javaList[A] = javafx.collections.FXCollections.observableArrayList[A]
+
+  def empty[A]: ObservableBuffer[A] = new ObservableBuffer(javaList[A])
+  
+  def from[A](source: IterableOnce[A]): ObservableBuffer[A] = {
+    val list = javaList[A]
+    source.iterator.asJava forEachRemaining { x => list add x }
+    new ObservableBuffer(list)
+  }
+
+  def newBuilder[A] = new Builder[A, ObservableBuffer[A]] {
+
+    private val list = javaList[A]
+
+    def addOne(elem: A) = {
+      list add elem
+      this
+    }
+
+    def clear() = list.clear()
+
+    def result = new ObservableBuffer(list)
+  }
 
   def apply[A](elementChange: A => Observable): ObservableBuffer[A] = {
     //	Not sure why JFX use array of Observable
@@ -182,12 +126,6 @@ object ObservableBuffer extends SeqFactory[ObservableBuffer] {
     }
     new ObservableBuffer[A](FXCollections.observableArrayList[A](callback))
   }
-
-  implicit def cbf[A] = new GenericCanBuildFrom[A] {
-    override def apply() = newBuilder[A]
-  }
-
-  implicit def toObservableList[A](ob: ObservableBuffer[A]) = ob.toObservableList
 
   implicit def fromObservableList[A](ol: ObservableList[A]) = new ObservableBuffer(ol)
 }

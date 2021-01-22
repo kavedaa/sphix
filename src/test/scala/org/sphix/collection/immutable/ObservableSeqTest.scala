@@ -15,9 +15,9 @@ class ObservableSeqTest extends FunSuite with Matchers {
     
     ObservableSeq('A, 'B).toSeq should equal(Seq('A, 'B))
 
-    ObservableSeq('A, 'B).to[Seq] should equal(Seq('A, 'B))
+    ObservableSeq('A, 'B).to(Seq) should equal(Seq('A, 'B))
     
-    Seq('A, 'B).to[ObservableSeq] should equal(ObservableSeq('A, 'B))
+    Seq('A, 'B).to(ObservableSeq) should equal(ObservableSeq('A, 'B))
   }
   
   test("implicit conversion to ObservableList") {

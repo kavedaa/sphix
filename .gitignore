@@ -2,8 +2,12 @@
 *.bak
 *.log
 
-.metals
-.bloop
+.vscode
+
+metals.sbt
+.metals/
+.bloop/
+
 
 # sbt specific
 .cache-main
@@ -26,6 +30,8 @@ eclipse-settings.sbt
 .project
 .settings
 .metadata
+
+.vscode
 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
 

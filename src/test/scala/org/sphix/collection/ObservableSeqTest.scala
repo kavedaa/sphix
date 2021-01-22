@@ -19,9 +19,9 @@ class ObservableSeqTest extends FunSuite with Matchers {
 
     ObservableSeq('A, 'B).toSeq shouldEqual Seq('A, 'B)
 
-    ObservableSeq('A, 'B).to[Seq] shouldEqual Seq('A, 'B)
+    ObservableSeq('A, 'B).to(Seq) shouldEqual Seq('A, 'B)
 
-    Seq('A, 'B).to[ObservableSeq] shouldEqual ObservableSeq('A, 'B)
+    Seq('A, 'B).to(ObservableSeq) shouldEqual ObservableSeq('A, 'B)
   }
 
   test("samples of inherited standard collection methods") {
@@ -80,7 +80,7 @@ class ObservableSeqTest extends FunSuite with Matchers {
     ob += 'B
     count shouldEqual 1
 
-    obs dispose ()
+    obs.dispose()
     ob += 'C
     count shouldEqual 1
   }
@@ -98,14 +98,14 @@ class ObservableSeqTest extends FunSuite with Matchers {
     ob += 'B
     count shouldEqual 1 
 
-    obs dispose ()
+    obs.dispose()
     ob += 'C
     count shouldEqual 1
   }
 
   test("onAdded") {
 
-    var added: Seq[Symbol] = Nil
+    var added: Iterable[Symbol] = Nil
 
     val ob = ObservableBuffer('A)
 
@@ -120,7 +120,7 @@ class ObservableSeqTest extends FunSuite with Matchers {
 
   test("onRemoved") {
 
-    var removed: Seq[Symbol] = Nil
+    var removed: Iterable[Symbol] = Nil
 
     val ob = ObservableBuffer('A, 'B, 'C)
 
@@ -148,14 +148,5 @@ class ObservableSeqTest extends FunSuite with Matchers {
     intercept[UnsupportedOperationException] {
       ol add 'C
     } 
-  }
-
-  test("distinctBy") {
-    
-    case class Person(name: String, age: Int)
-    
-    val os = ObservableSeq(Person("John", 34), Person("Tom", 54), Person("John", 23))
-    
-    os distinctBy(_.name) shouldEqual Seq(Person("John", 34), Person("Tom", 54))
   }
 }

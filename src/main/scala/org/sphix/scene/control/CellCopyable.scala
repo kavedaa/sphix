@@ -51,16 +51,16 @@ trait CellCopyable {
     def childColumns(column: TableColumn[_, _]): Seq[TableColumn[_, _]] =
       column.getColumns match {
         case xs if xs.isEmpty => Seq(column)
-        case xs => xs flatMap childColumns
+        case xs => (xs flatMap childColumns).toSeq
       }
 
     val cells = getSelectionModel.getSelectedCells
     val rows = cells groupBy (_.getRow)
     val matrix = rows.toSeq sortBy (_._1) map (_._2 sortBy (_.getColumn))
     matrix map { row =>
-      row map { tp =>
+      row.toSeq map { tp =>
         val columns = getColumns
-        val dataColumns = linearColumns(columns)
+        val dataColumns = linearColumns(columns.toSeq)
         val visibleColumns = dataColumns filter (_.isVisible)
         val column = visibleColumns(tp.getColumn)
         val data = column getCellData tp.getRow

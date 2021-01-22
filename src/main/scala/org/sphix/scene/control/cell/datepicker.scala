@@ -43,7 +43,7 @@ trait DatePickerTableCell[S] extends TableCell[S, Option[LocalDate]] { cell =>
       setText(null)
       setGraphic(datePicker)
 
-      datePicker requestFocus ()
+      datePicker.requestFocus()
     }
   }
 
