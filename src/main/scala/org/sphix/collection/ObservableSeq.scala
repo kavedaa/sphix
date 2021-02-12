@@ -102,4 +102,13 @@ object ObservableSeq extends SeqFactory[ObservableSeq] {
   implicit def fromObservableList[A](ol: ObservableList[A]) = org.sphix.collection.immutable.ObservableSeq.fromObservableList(ol)
 
   def from[A](xs: Seq[A]) = fromObservableList(FXCollections.observableList(xs.asJava))
+
+  //  scala.Seq is now the immutable Seq, therefore we need an implicit conversion
+  implicit def toSeq[A](os: ObservableSeq[A]): Seq[A] = os.toSeq
+
+  //  this is for going directly Seq -> ObservableList
+  //  just add wrappers instead of creating a new collection
+  //  (has nothing to do with ObservableSeq, just convenient to place it here)
+  implicit def seqAsJavaObservableList[A](xs: Seq[A]): ObservableList[A] =
+    FXCollections.observableList(xs.asJava)
 }

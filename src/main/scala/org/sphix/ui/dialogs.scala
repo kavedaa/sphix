@@ -7,6 +7,7 @@ import javafx.scene.control._
 import org.sphix.Val
 import org.sphix.scene.control._
 import org.sphix.collection.ObservableSeq
+import org.sphix.collection.ObservableSeq._
 
 class ErrorDialog(header: String, message: String)
   extends Dialog[Nothing] {
@@ -39,7 +40,7 @@ class ErrorsDialog[A](title: String, errors: Seq[(A, Failure[_])])(render: A => 
 
     getColumns.addAll(item, error)
 
-    setItems(ObservableSeq.from(errors))
+    setItems(errors)
   }
 
   setTitle(title)
