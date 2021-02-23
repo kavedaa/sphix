@@ -2,6 +2,9 @@
 *.bak
 *.log
 
+.vscode/
+
+metals.sbt
 .metals
 .bloop
 
