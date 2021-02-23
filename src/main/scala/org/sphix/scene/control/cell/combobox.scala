@@ -70,7 +70,7 @@ abstract class ComboBoxTableCell[S, T] extends TableCell[S, T] { cell =>
       setGraphic(comboBox)
 
       //      comboBox show ()	//	this is wanted for good UX but triggers weird bug 
-      comboBox requestFocus ()
+      comboBox.requestFocus()
     }
   }
 

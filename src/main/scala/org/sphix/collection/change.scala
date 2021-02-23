@@ -7,13 +7,13 @@ import org.sphix.Observer
 sealed trait Change[+A]
 
 object Change {
-  case class Added[A](start: Int, added: Seq[A]) extends Change[A]
-  case class Removed[A](start: Int, removed: Seq[A]) extends Change[A]
+  case class Added[A](start: Int, added: Iterable[A]) extends Change[A]
+  case class Removed[A](start: Int, removed: Iterable[A]) extends Change[A]
   case class Permutated(start: Int, end: Int, permutation: (Int => Int)) extends Change[Nothing]
   case class Updated(start: Int, end: Int) extends Change[Nothing]
 }
 
-class ListChangeObserver[A](observableLists: Seq[ObservableList[A]], listener: ListChangeListener[A])
+class ListChangeObserver[A](observableLists: Iterable[ObservableList[A]], listener: ListChangeListener[A])
   extends Observer {
   def dispose() {
     observableLists foreach { _ removeListener listener }

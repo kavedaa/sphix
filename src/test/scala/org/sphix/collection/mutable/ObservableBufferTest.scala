@@ -17,9 +17,9 @@ class ObservableBufferTest extends FunSuite with Matchers {
 
     ObservableBuffer('A, 'B).toList shouldEqual List('A, 'B)
 
-    ObservableBuffer('A, 'B).to[List] shouldEqual List('A, 'B)
+    ObservableBuffer('A, 'B).to(List) shouldEqual List('A, 'B)
 
-    List('A, 'B).to[ObservableBuffer] shouldEqual ObservableBuffer('A, 'B)
+    List('A, 'B).to(ObservableBuffer) shouldEqual ObservableBuffer('A, 'B)
 
     ObservableBuffer('A, 'B) shouldEqual ObservableBuffer('A, 'B) 
   }
@@ -39,7 +39,7 @@ class ObservableBufferTest extends FunSuite with Matchers {
 
   test("clear") {
 
-    var changes: Seq[Change[Symbol]] = Nil
+    var changes: Iterable[Change[Symbol]] = Nil
     var count = 0
 
     val ob = ObservableBuffer('A, 'B)
@@ -49,7 +49,7 @@ class ObservableBufferTest extends FunSuite with Matchers {
       count += 1
     }
 
-    ob clear ()
+    ob.clear()
 
     count shouldEqual 1
     changes shouldEqual Seq(Removed(0, Seq('A, 'B)))
@@ -58,7 +58,7 @@ class ObservableBufferTest extends FunSuite with Matchers {
 
   test("insert single") {
 
-    var changes: Seq[Change[Symbol]] = Nil
+    var changes: Iterable[Change[Symbol]] = Nil
     var count = 0
 
     val ob = ObservableBuffer('A)
@@ -83,12 +83,12 @@ class ObservableBufferTest extends FunSuite with Matchers {
 
   test("insert multiple") {
 
-    var changes: Seq[Change[Symbol]] = Nil
+    var changes: Iterable[Change[Symbol]] = Nil
     var count = 0
 
     val init = Seq('A, 'B)
 
-    val ob = init.to[ObservableBuffer]
+    val ob = init.to(ObservableBuffer)
 
     ob onChange { cs =>
       changes = cs
@@ -100,7 +100,7 @@ class ObservableBufferTest extends FunSuite with Matchers {
     changes shouldEqual Seq(Added(1, Seq('C, 'D)))
     ob shouldEqual ObservableBuffer('A, 'C, 'D, 'B)
 
-    ob clear ()
+    ob.clear()
     ob insertAll (0, init)
     count = 0
 
@@ -109,7 +109,7 @@ class ObservableBufferTest extends FunSuite with Matchers {
     changes shouldEqual Seq(Added(2, Seq('C, 'D)))
     ob shouldEqual ObservableBuffer('A, 'B, 'C, 'D)
 
-    ob clear ()
+    ob.clear()
     ob insertAll (0, init)
     count = 0
 
@@ -118,7 +118,7 @@ class ObservableBufferTest extends FunSuite with Matchers {
     changes shouldEqual Seq(Added(2, Seq('C, 'D)))
     ob shouldEqual ObservableBuffer('A, 'B, 'C, 'D)
 
-    ob clear ()
+    ob.clear()
     ob insertAll (0, init)
     count = 0
 
@@ -127,7 +127,7 @@ class ObservableBufferTest extends FunSuite with Matchers {
     changes shouldEqual Seq(Added(0, Seq('C, 'D)))
     ob shouldEqual ObservableBuffer('C, 'D, 'A, 'B)
 
-    ob clear ()
+    ob.clear()
     ob insertAll (0, init)
     count = 0
 
@@ -136,16 +136,7 @@ class ObservableBufferTest extends FunSuite with Matchers {
     changes shouldEqual Seq(Added(0, Seq('C, 'D)))
     ob shouldEqual ObservableBuffer('C, 'D, 'A, 'B)
 
-    ob clear ()
-    ob insertAll (0, init)
-    count = 0
-
-    ob += ('C, 'D, 'E, 'F)
-    count shouldEqual 1
-    changes shouldEqual Seq(Added(2, Seq('C, 'D, 'E, 'F)))
-    ob shouldEqual ObservableBuffer('A, 'B, 'C, 'D, 'E, 'F)
-
-    ob clear ()
+    ob.clear()
     ob insertAll (0, init)
     count = 0
 
@@ -154,16 +145,16 @@ class ObservableBufferTest extends FunSuite with Matchers {
     changes shouldEqual Seq(Added(2, Seq('C, 'D, 'E)))
     ob shouldEqual ObservableBuffer('A, 'B, 'C, 'D, 'E)
 
-    ob clear ()
+    ob.clear()
     ob insertAll (0, init)
     count = 0
 
-    ob insert (1, 'C, 'D)
-    count shouldEqual 1
-    changes shouldEqual Seq(Added(1, Seq('C, 'D)))
-    ob shouldEqual ObservableBuffer('A, 'C, 'D, 'B)
+    // ob insert (1, 'C, 'D)
+    // count shouldEqual 1
+    // changes shouldEqual Seq(Added(1, Seq('C, 'D)))
+    // ob shouldEqual ObservableBuffer('A, 'C, 'D, 'B)
 
-    ob clear ()
+    ob.clear()
     ob insertAll (0, init)
     count = 0
 
@@ -175,12 +166,12 @@ class ObservableBufferTest extends FunSuite with Matchers {
 
   test("remove single") {
 
-    var changes: Seq[Change[Symbol]] = Nil
+    var changes: Iterable[Change[Symbol]] = Nil
     var count = 0
 
     val init = Seq('A, 'B, 'C)
 
-    val ob = init.to[ObservableBuffer]
+    val ob = init.to(ObservableBuffer)
 
     ob onChange { cs =>
       changes = cs
@@ -192,7 +183,7 @@ class ObservableBufferTest extends FunSuite with Matchers {
     changes shouldEqual Seq(Removed(1, Seq('B)))
     ob shouldEqual ObservableBuffer('A, 'C)
 
-    ob clear ()
+    ob.clear()
     ob insertAll (0, init)
     count = 0
 
@@ -204,12 +195,12 @@ class ObservableBufferTest extends FunSuite with Matchers {
 
   test("remove multiple") {
 
-    var changes: Seq[Change[Symbol]] = Nil
+    var changes: Iterable[Change[Symbol]] = Nil
     var count = 0
 
     val init = Seq('A, 'B, 'C, 'D, 'E)
 
-    val ob = init.to[ObservableBuffer]
+    val ob = init.to(ObservableBuffer)
 
     ob onChange { cs =>
       changes = cs
@@ -221,7 +212,7 @@ class ObservableBufferTest extends FunSuite with Matchers {
     changes shouldEqual Seq(Removed(1, Seq('B, 'C)))
     ob shouldEqual ObservableBuffer('A, 'D, 'E)
 
-    ob clear ()
+    ob.clear()
     ob insertAll (0, init)
     count = 0
 
@@ -230,16 +221,7 @@ class ObservableBufferTest extends FunSuite with Matchers {
     changes shouldEqual Seq(Removed(0, Seq('A)), Removed(1, Seq('C)))
     ob shouldEqual ObservableBuffer('B, 'D, 'E)
 
-    ob clear ()
-    ob insertAll (0, init)
-    count = 0
-
-    ob -= ('A, 'C, 'D)
-    count shouldEqual 1
-    changes shouldEqual Seq(Removed(0, Seq('A)), Removed(1, Seq('C, 'D)))
-    ob shouldEqual ObservableBuffer('B, 'E)
-
-    ob clear ()
+    ob.clear()
     ob insertAll (0, init)
     count = 0
 
@@ -248,7 +230,7 @@ class ObservableBufferTest extends FunSuite with Matchers {
     changes shouldEqual Seq(Removed(1, Seq('B, 'C, 'D)))
     ob shouldEqual ObservableBuffer('A, 'E)
 
-    ob clear ()
+    ob.clear()
     ob insertAll (0, init)
     count = 0
 
@@ -257,7 +239,7 @@ class ObservableBufferTest extends FunSuite with Matchers {
     changes shouldEqual Seq(Removed(0, Seq('A, 'B)))
     ob shouldEqual ObservableBuffer('C, 'D, 'E)
 
-    ob clear ()
+    ob.clear()
     ob insertAll (0, init)
     count = 0
 
@@ -269,12 +251,12 @@ class ObservableBufferTest extends FunSuite with Matchers {
 
   test("update at n") {
 
-    var changes: Seq[Change[Symbol]] = Nil
+    var changes: Iterable[Change[Symbol]] = Nil
     var count = 0
 
     val init = Seq('A, 'B, 'C)
 
-    val ob = init.to[ObservableBuffer]
+    val ob = init.to(ObservableBuffer)
 
     ob onChange { cs =>
       changes = cs
@@ -294,12 +276,12 @@ class ObservableBufferTest extends FunSuite with Matchers {
 
   test("update entire buffer") {
     
-    var changes: Seq[Change[Symbol]] = Nil
+    var changes: Iterable[Change[Symbol]] = Nil
     var count = 0
 
     val init = Seq('A, 'B, 'C)
 
-    val ob = init.to[ObservableBuffer]
+    val ob = init.to(ObservableBuffer)
 
     val other = Seq('D, 'E, 'F)
     
@@ -319,62 +301,9 @@ class ObservableBufferTest extends FunSuite with Matchers {
     ob shouldEqual ObservableBuffer('D, 'E, 'F)    
   }
   
-  test("bind") {
-
-    //  screw this
-    
-//    var changes: Seq[Change[Int]] = Nil
-//    var count = 0
-//
-//    val ob1 = ObservableBuffer(1, 2, 3)
-//    
-//    val sf = SeqFunc(ob1) { x => x }
-//    
-//    val ob2 = ObservableBuffer[Int]()    
-//   
-//    ob2 onChange { cs =>
-//      changes = cs
-//      count += 1
-//    }
-//    
-//    ob2 <== sf
-//
-//    count shouldEqual 1
-//    ob2 shouldEqual Seq(1, 2, 3)    
-//    
-//    ob1() = Seq(7, 8, 9)
-//    
-//    count shouldEqual 2
-//    ob2 shouldEqual Seq(7, 8, 9)
-//    
-//    ob1 += 4
-//    
-//    count shouldEqual 3
-//    ob2 shouldEqual Seq(7, 8, 9, 4)
-//    
-//    ob1 -= 8
-//
-//    count shouldEqual 4
-//    ob2 shouldEqual Seq(7, 9, 4)
-//    
-//    ob1 doSortWith(_ > _)
-//    
-//    count shouldEqual 5
-//    ob2 shouldEqual Seq(9, 7, 4)
-//
-//    ob1(1) = 5
-//    
-//    count shouldEqual 6
-//    ob2(1) shouldEqual 5
-//    
-//    
-//    //	TODO: unbind
-//    ob2 unbind()
-  }
-  
   test("element change") {
     
-    var changes: Seq[Change[Val[Int]]] = Nil
+    var changes: Iterable[Change[Val[Int]]] = Nil
     var count = 0
 
     val ob = ObservableBuffer[Val[Int]]((x: Val[Int]) => x)
@@ -428,44 +357,4 @@ class ObservableBufferTest extends FunSuite with Matchers {
     count shouldEqual 3
   }
   
-  test("doSortBy") {
-
-    val ob = ObservableBuffer(3, 1, 5, 2, 4)
-
-    ob doSortBy (x => x)
-
-    ob shouldEqual Seq(1, 2, 3, 4, 5)
-  }
-  
-  test("doSortWith") {
-
-    val ob = ObservableBuffer(3, 1, 5, 2, 4)
-
-    ob doSortWith (_ > _)
-
-    ob shouldEqual Seq(5, 4, 3, 2, 1)    
-  }
-
-  test("sort underlying OList") {
-
-    val ob = ObservableBuffer(2, 3, 1)
-
-    var changes: Seq[Change[Int]] = Nil
-    var count = 0
-
-    ob onChange { cs =>
-      changes = cs
-      count += 1
-    }
-
-    FXCollections sort (ob.toObservableList, implicitly[Ordering[Int]])
-
-    count shouldEqual 1
-    val Seq(Permutated(from, to, f)) = changes
-    (from, to) shouldEqual (0, 3)
-    f(0) shouldEqual 1
-    f(1) shouldEqual 2
-    f(2) shouldEqual 0
-    ob shouldEqual ObservableBuffer(1, 2, 3)
-  }
 }

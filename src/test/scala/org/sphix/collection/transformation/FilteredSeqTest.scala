@@ -64,4 +64,37 @@ class FilteredSeqTest extends FeatureSpec with Matchers {
 
   }
 
+  feature("mutate the data") {
+
+    val ob = ObservableBuffer[Int]()
+
+    val filter = new SimpleObjectProperty[Int => Boolean]((i: Int) => true)
+
+    val filtered = new FilteredSeq(ob, filter)
+
+    ob() = Seq(1, 2, 3, 4, 5)
+    
+    scenario("all-pass filter") {
+
+      filter setValue { (i: Int) => true }
+
+      filtered shouldEqual Seq(1, 2, 3, 4, 5)
+    }
+
+    scenario("no-pass filter") {
+
+      filter setValue { (i: Int) => false }
+
+      filtered shouldEqual Nil
+    }
+
+    scenario("simple filter") {
+
+      filter setValue { (i: Int) => i > 3 }
+
+      filtered shouldEqual Seq(4, 5)
+    }
+
+  }
+
 }

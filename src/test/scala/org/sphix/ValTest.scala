@@ -84,7 +84,7 @@ class ValTest extends FeatureSpec with Matchers {
       oldValue shouldEqual 3
       newValue shouldEqual 4
 
-      obs dispose ()
+      obs.dispose()
 
       v() = 5
       newValue shouldEqual 4
@@ -127,7 +127,7 @@ class ValTest extends FeatureSpec with Matchers {
       v() = 4
       value shouldEqual 4
 
-      obs dispose ()
+      obs.dispose()
 
       v() = 5
       value shouldEqual 4

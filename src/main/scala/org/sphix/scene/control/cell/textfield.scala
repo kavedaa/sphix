@@ -40,7 +40,7 @@ trait TextFieldTableCell[S, T] extends TableCell[S, T] {
       textField setText (converter convert getItem)
       setText(null)
       setGraphic(textField)
-      textField requestFocus ()
+      textField.requestFocus()
     }
   }
 
@@ -112,7 +112,7 @@ trait TextFieldListCell[T] extends ListCell[T] {
       textField setText (converter convert getItem)
       setText(null)
       setGraphic(textField)
-      textField requestFocus ()
+      textField.requestFocus()
     }
   }
 

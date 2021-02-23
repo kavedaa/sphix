@@ -1,42 +1,26 @@
 package org.sphix.collection
 
+import scala.collection.SeqFactory
+import scala.collection.mutable.{ Builder, ArrayBuffer }
+import scala.jdk.CollectionConverters._
+
 import javafx.beans.InvalidationListener
-import javafx.collections.ListChangeListener
 import javafx.beans.value.ObservableValue
-import javafx.collections.ObservableList
-import scala.collection.JavaConversions
-import scala.collection.mutable.ArrayBuffer
+
+import javafx.collections._
+
 import org.sphix.Observable
 import org.sphix.collection.transformation._
-import scala.collection.generic.SeqFactory
-import scala.collection.generic.GenericTraversableTemplate
-import scala.collection.generic.GenericCompanion
-import scala.collection.SeqLike
-
-trait ObservableSeqLike[A, Repr] extends SeqLike[A, Repr] {
-
-  def distinctBy[B](f: A => B): Repr = {
-    val b = newBuilder
-    val seen = collection.mutable.HashSet[B]()
-    for (x <- this) {
-      val y = f(x)
-      if (!seen(y)) {
-        b += x
-        seen += y
-      }
-    }
-    b.result
-  }
-
-}
 
 trait ObservableSeq[A]
-  extends collection.Seq[A]
-  with GenericTraversableTemplate[A, ObservableSeq]
-  with ObservableSeqLike[A, ObservableSeq[A]]
+  extends scala.collection.Seq[A] 
+  with scala.collection.SeqOps[A, ObservableSeq, ObservableSeq[A]]
   with Observable {
 
-  override def companion: GenericCompanion[ObservableSeq] = ObservableSeq
+  override val iterableFactory: SeqFactory[ObservableSeq] = ObservableSeq
+  override protected def fromSpecific(coll: IterableOnce[A]) = iterableFactory.from(coll)
+  override protected def newSpecificBuilder: Builder[A, ObservableSeq[A]] = iterableFactory.newBuilder
+  override def empty = iterableFactory.empty[A]
 
   //	Backing list
 
@@ -46,7 +30,7 @@ trait ObservableSeq[A]
 
   def apply(n: Int) = observableList get n
 
-  def iterator = JavaConversions asScalaIterator observableList.iterator
+  def iterator = observableList.iterator.asScala
 
   def length = observableList.size
 
@@ -68,10 +52,10 @@ trait ObservableSeq[A]
         val seqChanges = new ArrayBuffer[Change[A]]()
         while (change.next()) {
           if (change.wasAdded) {
-            seqChanges += Change.Added(change.getFrom, (JavaConversions asScalaBuffer change.getAddedSubList))
+            seqChanges += Change.Added(change.getFrom, change.getAddedSubList.asScala)
           }
           if (change.wasRemoved) {
-            seqChanges += Change.Removed(change.getFrom, (JavaConversions asScalaBuffer change.getRemoved))
+            seqChanges += Change.Removed(change.getFrom, change.getRemoved.asScala)
           }
           if (change.wasPermutated) {
             seqChanges += Change.Permutated(change.getFrom, change.getTo, change.getPermutation)
@@ -80,39 +64,51 @@ trait ObservableSeq[A]
             seqChanges += Change.Updated(change.getFrom, change.getTo)
           }
         }
-        f(seqChanges)
+        f(seqChanges.toSeq)
       }
     }
     observableList addListener listener
     new ListChangeObserver(Seq(observableList), listener)
   }
 
-  def onAdded[U](f: Seq[A] => U) = onChange { changes =>
+  def onAdded[U](f: Iterable[A] => U) = onChange { changes =>
     changes collect { case c: Change.Added[A] => c } foreach (c => f(c.added))
   }
 
-  def onRemoved[U](f: Seq[A] => U) = onChange { changes =>
+  def onRemoved[U](f: Iterable[A] => U) = onChange { changes =>
     changes collect { case c: Change.Removed[A] => c } foreach (c => f(c.removed))
   }
+
   //	Transformations
 
-  def filtered(f: A => Boolean) = new FilteredSeq(this, f)
-  def filtered(f: ObservableValue[A => Boolean]) = new FilteredSeq(this, f)
+  def filtered(f: A => Boolean) = new TempFilteredSeq(this, f)
+  def filtered(f: ObservableValue[A => Boolean]) = new TempFilteredSeq(this, f)
 
   //	Conversion
 
-  def toObservableList: ObservableList[A]
+  def toObservableList: javafx.collections.ObservableList[A]
 }
 
 object ObservableSeq extends SeqFactory[ObservableSeq] {
 
-  def newBuilder[A] = immutable.ObservableSeq.newBuilder[A]
+  def empty[A]: ObservableSeq[A] = org.sphix.collection.immutable.ObservableSeq.empty[A]
 
-  //  def apply[A](elementChange: A => Observable) = immutable.ObservableSeq[A](elementChange)
+  def from[A](source: IterableOnce[A]): ObservableSeq[A] = org.sphix.collection.immutable.ObservableSeq.from(source)
 
-  implicit def cbf[A] = new GenericCanBuildFrom[A] {
-    override def apply() = newBuilder[A]
-  }
+  def newBuilder[A] = org.sphix.collection.immutable.ObservableSeq.newBuilder[A]
 
   implicit def toObservableList[A](os: ObservableSeq[A]) = os.toObservableList
+
+  implicit def fromObservableList[A](ol: ObservableList[A]) = org.sphix.collection.immutable.ObservableSeq.fromObservableList(ol)
+
+  def from[A](xs: Seq[A]) = fromObservableList(FXCollections.observableList(xs.asJava))
+
+  //  scala.Seq is now the immutable Seq, therefore we need an implicit conversion
+  implicit def toSeq[A](os: ObservableSeq[A]): Seq[A] = os.toSeq
+
+  //  this is for going directly Seq -> ObservableList
+  //  just add wrappers instead of creating a new collection
+  //  (has nothing to do with ObservableSeq, just convenient to place it here)
+  implicit def seqAsJavaObservableList[A](xs: Seq[A]): ObservableList[A] =
+    FXCollections.observableList(xs.asJava)
 }

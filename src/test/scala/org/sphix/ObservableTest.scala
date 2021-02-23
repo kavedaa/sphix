@@ -135,7 +135,7 @@ class ObservableTest extends FeatureSpec with Matchers {
       evidence shouldEqual o
       count shouldEqual 1
 
-      obs dispose ()
+      obs.dispose()
       o() = 5
       count shouldEqual 1
     }
@@ -160,7 +160,7 @@ class ObservableTest extends FeatureSpec with Matchers {
       evidence shouldEqual o2
       count shouldEqual 2
 
-      obs dispose ()
+      obs.dispose()
 
       o1() = 5
       count shouldEqual 2
@@ -227,7 +227,7 @@ class ObservableTest extends FeatureSpec with Matchers {
       o() = 4
       count shouldEqual 1
 
-      obs dispose ()
+      obs.dispose()
       o() = 5
       count shouldEqual 1
 
@@ -248,7 +248,7 @@ class ObservableTest extends FeatureSpec with Matchers {
       o2() = 4
       count shouldEqual 2
 
-      obs dispose ()
+      obs.dispose()
 
       o1() = 5
       count shouldEqual 2
@@ -338,7 +338,7 @@ class ObservableTest extends FeatureSpec with Matchers {
       p setValue "goodbye"
       count shouldEqual 1
 
-      obs dispose ()
+      obs.dispose()
 
       p setValue "hello again"
       count shouldEqual 1
@@ -359,7 +359,7 @@ class ObservableTest extends FeatureSpec with Matchers {
       q setValue "bye"
       count shouldEqual 2
 
-      obs dispose ()
+      obs.dispose()
 
       p setValue "hello again"
       q setValue "hi again"

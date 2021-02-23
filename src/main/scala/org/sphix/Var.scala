@@ -130,7 +130,7 @@ trait VarProxy[A] extends Var[A] with ValProxy[A] {
   def getBean = jfx.getBean
   def setValue(v: A) = jfx setValue v
   def bind(that: jfxbv.ObservableValue[_ <: A]) = jfx bind that
-  def unbind() = jfx unbind ()
+  def unbind() = jfx.unbind()
   def isBound = jfx.isBound
   def bindBidirectional(other: jfxbp.Property[A]) = jfx bindBidirectional other
   def unbindBidirectional(other: jfxbp.Property[A]) = jfx unbindBidirectional other

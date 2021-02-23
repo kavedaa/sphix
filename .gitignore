@@ -5,8 +5,8 @@
 .vscode/
 
 metals.sbt
-.metals
-.bloop
+.metals/
+.bloop/
 
 # sbt specific
 .cache-main
