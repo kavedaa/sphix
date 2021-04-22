@@ -2,11 +2,14 @@
 *.bak
 *.log
 
-.vscode/
 
-metals.sbt
-.metals/
+.bsp/
 .bloop/
+.metals/
+metals.sbt
+null
+
+.vscode/
 
 # sbt specific
 .cache-main

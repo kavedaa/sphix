@@ -1,4 +1,4 @@
-package org.sphix.ui
+package org.sphix.crud
 
 import javafx.scene.control.{ Alert, ButtonType }
 

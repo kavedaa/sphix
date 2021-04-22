@@ -1,8 +1,10 @@
-package org.sphix.ui
+package org.sphix.crud
 
 import scala.util._
 
 import org.controlsfx.control.Notifications
+
+import org.sphix.ui._
 
  class Feedback(implicit texts: CrudTexts) {
 

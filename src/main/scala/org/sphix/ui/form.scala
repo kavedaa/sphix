@@ -58,6 +58,19 @@ trait FormUtils { utils =>
     vbox(nodes: _*)
   }
 
+  def grid(items: (String, Node)*) = new GridPane {
+
+    items.zipWithIndex foreach { case ((label, node), index) =>
+      add(new Label(label), 0, index)
+      add(node, 1, index)
+    }
+
+    setHgap(elemGap)
+    setVgap(elemGap)
+    setPadding(new Insets(boxGap))
+  }
+
+
   class RadioGroup[A](items: Seq[A])(render: A => String) {
     val group = new ToggleGroup
     val itemButtons = items map { item =>

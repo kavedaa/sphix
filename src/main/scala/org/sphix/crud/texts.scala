@@ -1,4 +1,4 @@
-package org.sphix.ui
+package org.sphix.crud
 
 trait CrudTexts {
 

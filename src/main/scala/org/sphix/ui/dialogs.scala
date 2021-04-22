@@ -2,6 +2,7 @@ package org.sphix.ui
 
 import scala.util._
 
+import javafx.scene.Node
 import javafx.scene.control._
 
 import org.sphix.Val
@@ -50,4 +51,15 @@ class ErrorsDialog[A](title: String, errors: Seq[(A, Failure[_])])(render: A => 
   getDialogPane.getButtonTypes add ButtonType.CLOSE
 
   getDialogPane.setPrefWidth(800)
+}
+
+class ContentDialog(title: String, content: Node)
+  extends Dialog[Nothing] {
+
+  setTitle(title)
+  getDialogPane.setContent(content)
+
+  getDialogPane.getButtonTypes add ButtonType.CLOSE
+
+  setResizable(true)
 }
