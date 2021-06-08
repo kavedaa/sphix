@@ -9,6 +9,7 @@ import org.sphix.Val
 import org.sphix.scene.control._
 import org.sphix.collection.ObservableSeq
 import org.sphix.collection.ObservableSeq._
+import javafx.scene.image.Image
 
 class ErrorDialog(header: String, message: String)
   extends Dialog[Nothing] {
@@ -47,6 +48,32 @@ class ErrorsDialog[A](title: String, errors: Seq[(A, Failure[_])])(render: A => 
   setTitle(title)
   getDialogPane.setHeaderText(title)
   getDialogPane.setContent(table)
+
+  getDialogPane.getButtonTypes add ButtonType.CLOSE
+
+  getDialogPane.setPrefWidth(800)
+}
+
+class TrysDialog[A](title: String, xs: Seq[Try[A]])(render: A => String)
+  extends Dialog[Nothing] {
+
+  val list = new ListView[Try[A]] with ListUtils[Try[A]] {
+
+    setCell {
+      new TextCell {
+        def text(item: Try[A]) = item match {
+          case Success(value) => render(value)
+          case Failure(ex) => ex.getMessage
+        }
+      }
+    }
+
+    setItems(xs)
+  }
+
+  setTitle(title)
+  getDialogPane.setHeaderText(title)
+  getDialogPane.setContent(list)
 
   getDialogPane.getButtonTypes add ButtonType.CLOSE
 
