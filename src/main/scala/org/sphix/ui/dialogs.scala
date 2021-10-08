@@ -11,6 +11,29 @@ import org.sphix.collection.ObservableSeq
 import org.sphix.collection.ObservableSeq._
 import javafx.scene.image.Image
 
+class InfoDialog(header: String, message: String)
+  extends Dialog[Nothing] {
+
+  val textArea = new TextArea {
+    setEditable(false)
+    setText(message)
+    setWrapText(true)
+  }
+
+  setTitle("Info")
+  getDialogPane.setHeaderText(header)
+  getDialogPane.setContent(textArea)
+
+  //  a little trick to get the default graphic used in alerts
+  val img = new Label
+  img.getStyleClass.addAll("alert", "info", "dialog-pane")
+  setGraphic(img)
+
+  getDialogPane.getButtonTypes add ButtonType.CLOSE
+
+  setResizable(true)
+}
+
 class ErrorDialog(header: String, message: String)
   extends Dialog[Nothing] {
 
@@ -30,6 +53,8 @@ class ErrorDialog(header: String, message: String)
   setGraphic(img)
 
   getDialogPane.getButtonTypes add ButtonType.CLOSE
+
+  setResizable(true)
 }
 
 class ErrorsDialog[A](title: String, errors: Seq[(A, Failure[_])])(render: A => String)
@@ -52,6 +77,8 @@ class ErrorsDialog[A](title: String, errors: Seq[(A, Failure[_])])(render: A => 
   getDialogPane.getButtonTypes add ButtonType.CLOSE
 
   getDialogPane.setPrefWidth(800)
+
+  setResizable(true)
 }
 
 class TrysDialog[A](title: String, xs: Seq[Try[A]])(render: A => String)
@@ -78,6 +105,8 @@ class TrysDialog[A](title: String, xs: Seq[Try[A]])(render: A => String)
   getDialogPane.getButtonTypes add ButtonType.CLOSE
 
   getDialogPane.setPrefWidth(800)
+
+  setResizable(true)
 }
 
 class ContentDialog(title: String, content: Node)
