@@ -28,8 +28,8 @@ class ConvertedVar[A, B](remote: jfxbp.Property[B], converter: FullConverter[B, 
         bidirBoundTo foreach (binding => binding.property setValue (binding.converter convert a))
         updating = false
       }
-      invalidationListeners foreach (_ invalidated this)
-      changeListeners foreach (_ changed (this, oldValue, value))
+      invalidationListeners.toSeq foreach (_ invalidated this)
+      changeListeners.toSeq foreach (_ changed (this, oldValue, value))
     }
   }
 

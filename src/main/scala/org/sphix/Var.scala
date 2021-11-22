@@ -80,8 +80,8 @@ trait VarImpl[A] extends Var[A] with LazyVal[A] {
         bidirBoundTo foreach (binding => binding.property setValue (binding.converter convert newValue))
         updating = false
       }
-      invalidationListeners foreach (_ invalidated this)
-      changeListeners foreach (_ changed (this, oldValue, value))
+      invalidationListeners.toSeq foreach (_ invalidated this)
+      changeListeners.toSeq foreach (_ changed (this, oldValue, value))
     }
   }
 
