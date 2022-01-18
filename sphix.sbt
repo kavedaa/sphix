@@ -2,13 +2,13 @@ name := "sphix"
 
 organization := "org.sphix"
 
-version := "0.2.4"
+version := "0.2.5-SNAPSHOT"
 
 scalaVersion := "2.13.7"
 
 resolvers += "My Maven Repo Resolver" at "https://mymavenrepo.com/repo/pINely5F8nmLUayJnPul/"
 
-libraryDependencies += "org.controlsfx" % "controlsfx" % "8.40.15"
+libraryDependencies += "org.controlsfx" % "controlsfx" % "8.40.18"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % "test"
 
