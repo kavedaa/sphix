@@ -13,13 +13,19 @@ abstract class IniSettings(name: String) {
   
   protected abstract class Converter[A] {
     def conv(s: String): Option[A]
-    def deconv(a: A): String
+    def deconv(x: A): String
   }
 
   protected object Converter {
+
     implicit def stringConv = new Converter[String] {
       def conv(s: String) = Some(s)
-      def deconv(s: String) = s
+      def deconv(x: String) = x
+    }
+
+    implicit def booleanConv = new Converter[Boolean] {
+      def conv(s: String) = if (s == "true") Some(true) else Some(false)
+      def deconv(x: Boolean) = x.toString
     }
   }
 
