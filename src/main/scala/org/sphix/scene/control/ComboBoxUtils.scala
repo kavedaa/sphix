@@ -1,7 +1,7 @@
 package org.sphix.scene.control
 
 import javafx.scene.control._
-import javafx.util.Callback
+import javafx.util._
 
 trait ComboBoxUtils[T] extends ComboBox[T] with ListCells[T] {
 
@@ -15,4 +15,18 @@ trait ComboBoxUtils[T] extends ComboBox[T] with ListCells[T] {
     })
   }
 
+}
+
+trait StringComboBoxUtils[T] extends ComboBoxUtils[T] with ListCells[T] {
+
+  def stringValue(x: T): String
+
+  setCell(TextCell(stringValue))
+  setButtonCell(TextCell(stringValue))
+  setConverter {
+    new StringConverter[T] {
+      def fromString(x: String) = ???
+      def toString(x: T) = stringValue(x)
+    }
+  }
 }
