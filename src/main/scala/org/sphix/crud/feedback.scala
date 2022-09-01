@@ -10,7 +10,7 @@ import org.sphix.ui._
 
   def error(ex: Throwable) = {
     val actual = Option(ex.getCause) getOrElse ex
-    (new ErrorDialog(texts.Error, actual.getMessage)).showAndWait()
+    (new ExceptionDialog(texts.Error, actual)).showAndWait()
   }
 
   def notification(msg: String) = Notifications.create.text(msg).showInformation()

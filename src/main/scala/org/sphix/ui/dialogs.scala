@@ -4,6 +4,7 @@ import scala.util._
 
 import javafx.scene.Node
 import javafx.scene.control._
+import javafx.scene.layout._
 
 import org.sphix.Val
 import org.sphix.scene.control._
@@ -11,17 +12,23 @@ import org.sphix.collection.ObservableSeq
 import org.sphix.collection.ObservableSeq._
 import javafx.scene.image.Image
 
-class InfoDialog(header: String, message: String)
+class InfoDialog(title: Option[String], header: Option[String], message: String)
   extends Dialog[Nothing] {
+
+  def this(title: String, header: String, message: String) = this(Some(title), Some(header), message)
+  def this(header: String, message: String) = this(None, Some(header), message)
+  def this(title: Option[String], message: String) = this(title, None, message)
+  def this(message: String) = this(None, None, message)
 
   val textArea = new TextArea {
     setEditable(false)
-    setText(message)
     setWrapText(true)
   }
 
-  setTitle("Info")
-  getDialogPane.setHeaderText(header)
+  title foreach setTitle
+  header foreach getDialogPane.setHeaderText
+  textArea.setText(message)
+  
   getDialogPane.setContent(textArea)
 
   //  a little trick to get the default graphic used in alerts
@@ -34,17 +41,60 @@ class InfoDialog(header: String, message: String)
   setResizable(true)
 }
 
-class ErrorDialog(header: String, message: String)
+class ExceptionDialog(title: Option[String], header: Option[String], exception: Throwable)
   extends Dialog[Nothing] {
 
-  val textArea = new TextArea {
+  def this(title: String, header: String, exception: Throwable) = this(Some(title), Some(header), exception)
+  def this(header: String, exception: Throwable) = this(None, Some(header), exception)
+  def this(title: Option[String], exception: Throwable) = this(title, None, exception)
+  def this(exception: Throwable) = this(None, None, exception)
+
+  val textArea, stackTraceTextArea = new TextArea {
     setEditable(false)
-    setText(message)
     setWrapText(true)
   }
 
-  setTitle("Error")
-  getDialogPane.setHeaderText(header)
+  title foreach setTitle
+  header foreach getDialogPane.setHeaderText
+  textArea.setText(exception.getMessage)
+  stackTraceTextArea.setText(exception.getStackTrace.mkString("\n"))
+
+  val stackTracePane = new TitledPane {
+    setContent(stackTraceTextArea)
+    setCollapsible(true)
+    setExpanded(false)
+  }
+
+  val content = new VBox(textArea, stackTraceTextArea)
+
+  getDialogPane.setContent(content)
+
+  //  a little trick to get the default graphic used in alerts
+  val img = new Label
+  img.getStyleClass.addAll("alert", "error", "dialog-pane")
+  setGraphic(img)
+
+  getDialogPane.getButtonTypes add ButtonType.CLOSE
+
+  setResizable(true)
+}
+
+class ErrorDialog(title: Option[String], header: Option[String], message: String)
+  extends Dialog[Nothing] {
+
+  def this(title: String, message: String) = this(Some(title), None, message)
+  def this(title: Option[String], message: String) = this(title, None, message)
+  def this(message: String) = this(None, None, message)
+
+  val textArea= new TextArea {
+    setEditable(false)
+    setWrapText(true)
+  }
+
+  title foreach setTitle
+  header foreach getDialogPane.setHeaderText
+  textArea.setText(message)
+  
   getDialogPane.setContent(textArea)
 
   //  a little trick to get the default graphic used in alerts
