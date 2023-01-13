@@ -31,6 +31,9 @@ abstract class CrudPane(
   icons: CrudIcons)
   extends BorderPane {
 
+  def table: TableView[_]
+  def content: Node
+
   val addAction = new Action(texts.Add + "...", _ => add()) { setGraphic(new ImageView(icons.Add)) }
   val editAction = new Action(texts.Edit + "...", _ => edit()) { setGraphic(new ImageView(icons.Edit)) }
   val deleteAction = new Action(texts.Delete, _ => delete()) { setGraphic(new ImageView(icons.Delete)) }
@@ -43,9 +46,6 @@ abstract class CrudPane(
   ).flatten
 
   def toolbarPostItems: List[Node] = Nil
-
-
-  def table: TableView[_]
 
   def init() = {
 
@@ -81,7 +81,7 @@ abstract class CrudPane(
     }
 
     setTop(toolbar)
-    setCenter(table)
+    setCenter(content)
   }
 
 }
