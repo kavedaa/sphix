@@ -47,11 +47,15 @@ trait RightConverter[A, B] {
 }
 
 object RightConverter {
+
   def apply[A, B](convert0: A => B, deconvert0: B => Option[A]) =
     new RightConverter[A, B] {
       def convert(a: A) = convert0(a)
       def deconvert(b: B) = deconvert0(b)
     }
+  
+  implicit val intConverter = IntConverter
+  implicit def defaultConverter[A] = DefaultConverter[A]
 }
 
 trait FullConverter[A, B] {
