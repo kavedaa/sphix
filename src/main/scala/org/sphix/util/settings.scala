@@ -18,12 +18,12 @@ abstract class IniSettings(name: String) {
 
   protected object Converter {
 
-    implicit def stringConv = new Converter[String] {
+    implicit def stringConv: Converter[String] = new Converter[String] {
       def conv(s: String) = Some(s)
       def deconv(x: String) = x
     }
 
-    implicit def booleanConv = new Converter[Boolean] {
+    implicit def booleanConv: Converter[Boolean] = new Converter[Boolean] {
       def conv(s: String) = if (s == "true") Some(true) else Some(false)
       def deconv(x: Boolean) = x.toString
     }
@@ -34,18 +34,18 @@ abstract class IniSettings(name: String) {
     def getBean = null
     def getName = name
 
-    def load(properties: Properties) {
+    def load(properties: Properties) = {
       setValue(Option(properties getProperty name) flatMap converter.conv)
     }
 
-    def store(properties: Properties) {
+    def store(properties: Properties) = {
       getValue foreach (value => properties setProperty (name, converter deconv value))
     }
   }
 
   protected val settings: Seq[IniProperty[_]]
 
-  private def load() {
+  private def load() = {
     Try {
       val properties = new Properties
       properties load (new FileInputStream(file))
@@ -53,7 +53,7 @@ abstract class IniSettings(name: String) {
     }
   }
   
-  private def store() {
+  private def store() = {
     Try {
       val properties = new Properties
       settings foreach (_ store properties)
@@ -62,12 +62,12 @@ abstract class IniSettings(name: String) {
   }
   
   private val storeListener = new InvalidationListener {
-    def invalidated(o: Observable) {
+    def invalidated(o: Observable) = {
       store()
     }
   }
   
-  def init() {
+  def init() = {
     load()
     settings foreach(_ addListener storeListener)
   }

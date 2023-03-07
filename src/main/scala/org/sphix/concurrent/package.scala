@@ -52,7 +52,7 @@ package object concurrent {
   }
 
   private final val UNCAUGHT_HANDLER = new Thread.UncaughtExceptionHandler {
-    def uncaughtException(thread: Thread, throwable: Throwable) {
+    def uncaughtException(thread: Thread, throwable: Throwable) = {
       // Ignore IllegalMonitorStateException, these are thrown from the ThreadPoolExecutor
       // when a browser navigates away from a page hosting an applet that uses
       // asynchronous tasks. These exceptions generally do not cause loss of functionality.
@@ -89,21 +89,21 @@ package object concurrent {
     
     allowCoreThreadTimeOut(true)
     
-    override def beforeExecute(t: Thread, r: Runnable) {
+    override def beforeExecute(t: Thread, r: Runnable) = {
       super.beforeExecute(t, r)
       runLater { executions() = executions() + 1 }      
     }
 
-    override def afterExecute(r: Runnable, t: Throwable) {
+    override def afterExecute(r: Runnable, t: Throwable) = {
       super.afterExecute(r, t)
       runLater { executions() = executions() - 1 }      
     }
     
   }
 
-  implicit val jfxExecutionContext = ExecutionContext fromExecutor EXECUTOR
+  implicit val jfxExecutionContext: ExecutionContext = ExecutionContext fromExecutor EXECUTOR
   
- def runLater[U](r: => U) = Platform runLater new Runnable { def run { r } }  
+  def runLater[U](r: => U) = Platform runLater new Runnable { def run: Unit = { r } }  
   
- def fxt[U](r: => U) = Platform runLater new Runnable { def run { r } }
+  def fxt[U](r: => U) = Platform runLater new Runnable { def run: Unit = { r } }
 }

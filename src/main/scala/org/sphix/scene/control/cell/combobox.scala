@@ -22,7 +22,7 @@ import org.sphix.scene.control.ComboBoxUtils
 import javafx.scene.control.ListCell
 
 class CellProxy[T] extends javafx.scene.control.Cell[T] {
-  def proxyUpdateItem(item: T, empty: Boolean) {
+  def proxyUpdateItem(item: T, empty: Boolean) = {
     updateItem(item, empty)
   }
 }
@@ -49,7 +49,7 @@ abstract class ComboBoxTableCell[S, T] extends TableCell[S, T] { cell =>
     }
 
     setOnKeyPressed(new EventHandler[KeyEvent] {
-      def handle(t: KeyEvent) {
+      def handle(t: KeyEvent) = {
         if (new KeyCodeCombination(KeyCode.ESCAPE) `match` t) {
           cancelEdit()
         }
@@ -58,7 +58,7 @@ abstract class ComboBoxTableCell[S, T] extends TableCell[S, T] { cell =>
 
   }
 
-  override def startEdit() {
+  override def startEdit() = {
     if (isEditable && getTableView.isEditable && getTableColumn.isEditable) {
     
       comboBox setItems items(getTableView.getItems get getIndex)
@@ -74,13 +74,13 @@ abstract class ComboBoxTableCell[S, T] extends TableCell[S, T] { cell =>
     }
   }
 
-  override def cancelEdit() {
+  override def cancelEdit() = {
     super.cancelEdit()
     setText(f(getItem))
     setGraphic(null)
   }
 
-  override def updateItem(item: T, empty: Boolean) {
+  override def updateItem(item: T, empty: Boolean) = {
     super.updateItem(item, empty)
     if (!empty) {
       if (isEditing) {

@@ -21,7 +21,7 @@ trait CheckBoxTableCell[S, T] extends TableCell[S, T] {
 
   var data = Var[java.lang.Boolean](false)
 
-  override def updateItem(cellItem: T, empty: Boolean) {
+  override def updateItem(cellItem: T, empty: Boolean) = {
     super.updateItem(cellItem, empty)
     if (!empty) {
       setGraphic(checkbox)
@@ -58,7 +58,7 @@ trait TriStateCheckBoxTableCell[S, T] extends TableCell[S, T] {
   var dataChecked = Var[java.lang.Boolean](false)
   var dataIndeterminate = Var[java.lang.Boolean](false)
 
-  override def updateItem(cellItem: T, empty: Boolean) {
+  override def updateItem(cellItem: T, empty: Boolean) = {
     super.updateItem(cellItem, empty)
     if (!empty) {
       setGraphic(checkbox)

@@ -14,7 +14,7 @@ trait Observable extends JFXO {
 
   def onInvalidateOnce[U](f: JFXO => U): Observer = {
     val observer = new InvalidationObserverLike(Seq(this)) {
-      def invalidated(o: JFXO) { f(o); removeListener(this) }
+      def invalidated(o: JFXO) = { f(o); removeListener(this) }
     }
     addListener(observer)
     observer
@@ -32,11 +32,11 @@ trait ObservableImpl {
 
   protected lazy val invalidationListeners = ListBuffer[InvalidationListener]()
 
-  def addListener(listener: InvalidationListener) {
+  def addListener(listener: InvalidationListener): Unit = {
     invalidationListeners += listener
   }
 
-  def removeListener(listener: InvalidationListener) {
+  def removeListener(listener: InvalidationListener): Unit = {
     invalidationListeners -= listener
   }
 }
@@ -45,11 +45,11 @@ private[sphix] trait PluralObservable extends JFXO {
 
   def observables: Seq[JFXO]
 
-  def addListener(listener: InvalidationListener) {
+  def addListener(listener: InvalidationListener) = {
     observables foreach { _ addListener listener }
   }
 
-  def removeListener(listener: InvalidationListener) {
+  def removeListener(listener: InvalidationListener) = {
     observables foreach { _ removeListener listener }
   }
 
@@ -61,7 +61,7 @@ private[sphix] trait PluralObservable extends JFXO {
 
   def onInvalidateOnce[U](f: JFXO => U): Observer = {
     val observer = new InvalidationObserverLike(observables) {
-      def invalidated(o: JFXO) { f(o); removeListener(this) }
+      def invalidated(o: JFXO) = { f(o); removeListener(this) }
     }
     addListener(observer)
     observer

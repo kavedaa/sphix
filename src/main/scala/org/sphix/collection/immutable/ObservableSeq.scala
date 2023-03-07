@@ -45,6 +45,6 @@ object ObservableSeq extends SeqFactory[ObservableSeq] {
     def result = new ObservableSeq(list)
   }
 
-  implicit def fromObservableList[A](ol: ObservableList[A]) = new ObservableSeq(ol)
+  implicit def fromObservableList[A](ol: ObservableList[A]): ObservableSeq[A] = new ObservableSeq(ol)
 }
 

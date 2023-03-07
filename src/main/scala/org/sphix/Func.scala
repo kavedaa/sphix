@@ -10,7 +10,7 @@ abstract class Func[A](protected val dependencies0: jfxb.Observable*) extends La
 
   dependencies foreach (_ addListener lazyListener)
 
-  def dispose() {
+  def dispose() = {
     dependencies foreach (_ removeListener lazyListener)
   }
 }

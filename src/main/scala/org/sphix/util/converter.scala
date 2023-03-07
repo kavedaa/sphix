@@ -54,8 +54,8 @@ object RightConverter {
       def deconvert(b: B) = deconvert0(b)
     }
   
-  implicit val intConverter = IntConverter
-  implicit def defaultConverter[A] = DefaultConverter[A]
+  implicit val intConverter: IntConverter.type = IntConverter
+  implicit def defaultConverter[A]: DefaultConverter[A] = DefaultConverter[A]()
 }
 
 trait FullConverter[A, B] {
@@ -95,7 +95,7 @@ object FullConverter {
     def deconvert(b: B) = d(b)
   }
 
-  implicit def fullConverter[A, B](implicit c: A => B, d: B => A) = apply(c, d)
+  implicit def fullConverter[A, B](implicit c: A => B, d: B => A): FullConverter[A, B] = apply(c, d)
 
   //	check it
   FullConverter.fullConverter[Boolean, java.lang.Boolean]

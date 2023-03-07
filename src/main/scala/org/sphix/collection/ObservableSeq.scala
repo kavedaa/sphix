@@ -36,11 +36,11 @@ trait ObservableSeq[A]
 
   //	Observable implementations
 
-  def addListener(listener: InvalidationListener) {
+  def addListener(listener: InvalidationListener) = {
     observableList addListener listener
   }
 
-  def removeListener(listener: InvalidationListener) {
+  def removeListener(listener: InvalidationListener) = {
     observableList removeListener listener
   }
 
@@ -48,7 +48,7 @@ trait ObservableSeq[A]
 
   def onChange[U](f: Seq[Change[A]] => U) = {
     val listener = new ListChangeListener[A] {
-      def onChanged(change: javafx.collections.ListChangeListener.Change[_ <: A]) {
+      def onChanged(change: javafx.collections.ListChangeListener.Change[_ <: A]) = {
         val seqChanges = new ArrayBuffer[Change[A]]()
         while (change.next()) {
           if (change.wasAdded) {
@@ -97,9 +97,9 @@ object ObservableSeq extends SeqFactory[ObservableSeq] {
 
   def newBuilder[A] = org.sphix.collection.immutable.ObservableSeq.newBuilder[A]
 
-  implicit def toObservableList[A](os: ObservableSeq[A]) = os.toObservableList
+  implicit def toObservableList[A](os: ObservableSeq[A]): ObservableList[A] = os.toObservableList
 
-  implicit def fromObservableList[A](ol: ObservableList[A]) = org.sphix.collection.immutable.ObservableSeq.fromObservableList(ol)
+  implicit def fromObservableList[A](ol: ObservableList[A]): ObservableSeq[A] = org.sphix.collection.immutable.ObservableSeq.fromObservableList(ol)
 
   def from[A](xs: Seq[A]) = fromObservableList(FXCollections.observableList(xs.asJava))
 

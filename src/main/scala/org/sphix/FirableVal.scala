@@ -9,7 +9,7 @@ trait FirableVal[A] extends Val[A] with ValImpl[A] {
   private var isAtomic = false
   private var invalidated = false
   
-  def fire() {
+  def fire() = {
     if (!isAtomic) {
       invalidationListeners.toSeq foreach (_ invalidated this)
       changeListeners.toSeq foreach (_ changed (this, currentValue, getValue))

@@ -5,7 +5,7 @@ import scala.concurrent._
 
 import javafx.stage._
 
-import org.sphix.concurrent._
+import org.sphix.concurrent.fxt
 
 
 class WaitModal(popup: Popup) {

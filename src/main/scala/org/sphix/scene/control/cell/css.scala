@@ -6,7 +6,7 @@ trait CSSTableCell[S, T] extends TableCell[S, T] {
 
   def cssClasses: Seq[(String, S => Boolean)]
 
-  override def updateItem(item: T, empty: Boolean) {
+  override def updateItem(item: T, empty: Boolean) = {
     super.updateItem(item, empty)
     cssClasses foreach { case (name, condition) => getStyleClass remove name }
     if (!empty) {

@@ -16,25 +16,25 @@ import org.sphix.util.RightConverter
 import javafx.scene.control.TableColumn
 import org.sphix.util.DefaultConverter
 
-trait TextFieldTableCell[S, T] extends TableCell[S, T] {
+trait TextFieldTableCell[S, T] extends TableCell[S, T] { cell =>
 
   def converter: RightConverter[T, String]
 
   lazy val textField = new TextField {
 
     setOnKeyPressed(new EventHandler[KeyEvent] {
-      def handle(t: KeyEvent) {
+      def handle(t: KeyEvent) = {
         t match {
           case t if new KeyCodeCombination(KeyCode.ENTER) `match` t =>
             converter deconvert getText map commitEdit
-          case t if new KeyCodeCombination(KeyCode.ESCAPE) `match` t => cancelEdit()
+          case t if new KeyCodeCombination(KeyCode.ESCAPE) `match` t => cell.cancelEdit()
           case _ =>
         }
       }
     })
   }
 
-  override def startEdit() {
+  override def startEdit() = {
     if (isEditable && getTableView.isEditable) {
       super.startEdit()
       textField setText (converter convert getItem)
@@ -44,19 +44,19 @@ trait TextFieldTableCell[S, T] extends TableCell[S, T] {
     }
   }
 
-  override def commitEdit(value: T) {
+  override def commitEdit(value: T) = {
     super.commitEdit(value)
     setGraphic(null)
     getTableView.requestFocus()
   }
 
-  override def cancelEdit() {
+  override def cancelEdit() = {
     super.cancelEdit()
     setText(converter convert getItem)
     setGraphic(null)
   }
 
-  override def updateItem(item: T, empty: Boolean) {
+  override def updateItem(item: T, empty: Boolean) = {
     super.updateItem(item, empty)
     if (isEmpty()) {
       setText(null)
@@ -88,25 +88,25 @@ object TextFieldTableCell {
 }
 
 
-trait TextFieldListCell[T] extends ListCell[T] {
+trait TextFieldListCell[T] extends ListCell[T] { cell =>
 
   def converter: RightConverter[T, String]
 
   lazy val textField = new TextField {
 
     setOnKeyPressed(new EventHandler[KeyEvent] {
-      def handle(t: KeyEvent) {
+      def handle(t: KeyEvent) = {
         t match {
           case t if new KeyCodeCombination(KeyCode.ENTER) `match` t =>
             converter deconvert getText map commitEdit
-          case t if new KeyCodeCombination(KeyCode.ESCAPE) `match` t => cancelEdit()
+          case t if new KeyCodeCombination(KeyCode.ESCAPE) `match` t => cell.cancelEdit()
           case _ =>
         }
       }
     })
   }
 
-  override def startEdit() {
+  override def startEdit() = {
     if (isEditable && getListView.isEditable) {
       super.startEdit()
       textField setText (converter convert getItem)
@@ -116,19 +116,19 @@ trait TextFieldListCell[T] extends ListCell[T] {
     }
   }
 
-  override def commitEdit(value: T) {
+  override def commitEdit(value: T) = {
     super.commitEdit(value)
     setGraphic(null)
     getListView.requestFocus()
   }
 
-  override def cancelEdit() {
+  override def cancelEdit() = {
     super.cancelEdit()
     setText(converter convert getItem)
     setGraphic(null)
   }
 
-  override def updateItem(item: T, empty: Boolean) {
+  override def updateItem(item: T, empty: Boolean) = {
     super.updateItem(item, empty)
     if (isEmpty()) {
       setText(null)

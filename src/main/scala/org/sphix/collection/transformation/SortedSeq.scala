@@ -8,7 +8,7 @@ import org.sphix.collection.ObservableSeq
 class SortedSeq[A](source: ObservableSeq[A])
   extends ObservableSeq[A] {
 
-  protected val observableList = new SortedList(source)
+  protected val observableList: SortedList[A] = new SortedList(source)
 
   def setComparator(comparator: ObservableValue[java.util.Comparator[A]]) = {
     observableList.comparatorProperty.unbind()

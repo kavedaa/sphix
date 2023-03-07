@@ -23,7 +23,7 @@ trait TreeTableUtils[S] { this: TreeTableView[S] =>
      * Utility method for setting a cell factory without bothering about
      * specifying it as a function of a TreeTableColumn parameter.
      */
-    def setCell(tableCell: => TreeTableCell[S, T]) {
+    def setCell(tableCell: => TreeTableCell[S, T]) = {
       setCellFactory(new Callback[TreeTableColumn[S, T], TreeTableCell[S, T]] {
         def call(c: TreeTableColumn[S, T]) = tableCell
       })
@@ -37,6 +37,6 @@ trait TreeTableUtils[S] { this: TreeTableView[S] =>
       this(Absent)(text, subColumns: _*)
     
     prefWidth ifPresent setPrefWidth
-    getColumns addAll (subColumns: _*)
+    getColumns.addAll(subColumns: _*)
   }
 }

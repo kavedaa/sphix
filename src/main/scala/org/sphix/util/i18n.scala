@@ -17,7 +17,7 @@ trait I18n {
 
   def i18n(key: String, args: Any*)(implicit locale: Locale) = {
     val text = value(key, locale)
-    MessageFormat format (text, args map (_.asInstanceOf[AnyRef]): _*)
+    MessageFormat.format(text, args.map(_.asInstanceOf[AnyRef]): _*)
   }
 
 }

@@ -25,7 +25,7 @@ trait TableUtils[S] extends TableCells[S] { this: TableView[S] =>
      * Utility method for setting a cell factory without bothering about
      * specifying it as a function of a TableColumn parameter.
      */
-    def setCell(tableCell: => TableCell[S, T]) {
+    def setCell(tableCell: => TableCell[S, T]) = {
       setCellFactory(new Callback[TableColumn[S, T], TableCell[S, T]] {
         def call(c: TableColumn[S, T]) = tableCell
       })
@@ -39,6 +39,6 @@ trait TableUtils[S] extends TableCells[S] { this: TableView[S] =>
       this(Absent)(text, subColumns: _*)
     
     prefWidth ifPresent setPrefWidth
-    getColumns addAll (subColumns: _*)
+    getColumns.addAll(subColumns: _*)
   }
 }

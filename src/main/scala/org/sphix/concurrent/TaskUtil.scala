@@ -33,7 +33,7 @@ trait TaskUtil {
 
   def execute(task: Task[_]) = {
     println("executing " + task)
-   EXECUTOR execute task 
+    EXECUTOR execute task 
   }
 
   def runLater[U](r: => U) = Platform runLater { () => r }  

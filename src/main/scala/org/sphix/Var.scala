@@ -32,7 +32,7 @@ abstract class Var[A]
 
   def bindBidirectionalWithConverter[B](that: jfxbp.Property[B], converter: FullConverter[A, B]): Unit = {
     val listener = new ChangeListener[B] {
-      def changed(ov: jfxbv.ObservableValue[_ <: B], oldVal: B, newVal: B) {
+      def changed(ov: jfxbv.ObservableValue[_ <: B], oldVal: B, newVal: B) = {
         setValue(converter deconvert newVal)
       }
     }
@@ -71,7 +71,7 @@ abstract class Var[A]
 
 trait VarImpl[A] extends Var[A] with LazyVal[A] {
 
-  protected def write(newValue: A) {
+  protected def write(newValue: A) = {
     if (newValue != value) {
       val oldValue = value
       value = newValue
@@ -85,7 +85,7 @@ trait VarImpl[A] extends Var[A] with LazyVal[A] {
     }
   }
 
-  def setValue(newValue: A) {
+  def setValue(newValue: A) = {
     if (!isBound) write(newValue)
     else throw new RuntimeException("A bound value cannot be set.")
   }
@@ -94,14 +94,14 @@ trait VarImpl[A] extends Var[A] with LazyVal[A] {
 
   def isBound = boundTo.isDefined
 
-  def bind(that: jfxbv.ObservableValue[_ <: A]) {
+  def bind(that: jfxbv.ObservableValue[_ <: A]) = {
     if (isBound) unbind()
     boundTo = Some(that)
     that addListener lazyListener
     invalidate(that)
   }
 
-  def unbind() {
+  def unbind() = {
     boundTo map { ov => ov removeListener lazyListener }
     boundTo = None
   }
@@ -113,7 +113,7 @@ trait VarImpl[A] extends Var[A] with LazyVal[A] {
   }
 
   protected lazy val bidirListener = new ChangeListener[A] {
-    def changed(ov: jfxbv.ObservableValue[_ <: A], oldVal: A, newVal: A) {
+    def changed(ov: jfxbv.ObservableValue[_ <: A], oldVal: A, newVal: A) = {
       setValue(newVal)
     }
   }

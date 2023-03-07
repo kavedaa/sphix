@@ -70,7 +70,9 @@ abstract class CrudPane(
       if (mouseEvent.getClickCount == 2) edit()
     })
 
-    val contextMenu = ActionUtils.createContextMenu(contextActions.to(ObservableSeq))
+    val contextActionsSeq = contextActions.to(ObservableSeq)
+
+    val contextMenu = ActionUtils.createContextMenu(contextActionsSeq)
 
     table.setContextMenu(contextMenu)
 

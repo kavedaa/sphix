@@ -15,7 +15,7 @@ object Change {
 
 class ListChangeObserver[A](observableLists: Iterable[ObservableList[A]], listener: ListChangeListener[A])
   extends Observer {
-  def dispose() {
+  def dispose() = {
     observableLists foreach { _ removeListener listener }
   }
 }

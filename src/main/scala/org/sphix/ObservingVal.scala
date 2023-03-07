@@ -8,7 +8,7 @@ class ObservingVal[A](value: A, f: A => javafx.beans.Observable)
   def currentValue = value
 
   val listener = new InvalidationListener {
-    def invalidated(o: javafx.beans.Observable) {
+    def invalidated(o: javafx.beans.Observable) = {
       fire()
     }
   }

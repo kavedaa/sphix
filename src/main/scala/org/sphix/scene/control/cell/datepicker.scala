@@ -23,7 +23,7 @@ trait DatePickerTableCell[S] extends TableCell[S, Option[LocalDate]] { cell =>
 
     //	TODO this doesn't seem to work
     setOnKeyPressed(new EventHandler[KeyEvent] {
-      def handle(t: KeyEvent) {
+      def handle(t: KeyEvent) = {
         if (new KeyCodeCombination(KeyCode.ESCAPE) `match` t) {
           cancelEdit()
         }
@@ -32,7 +32,7 @@ trait DatePickerTableCell[S] extends TableCell[S, Option[LocalDate]] { cell =>
 
   }
 
-  override def startEdit() {
+  override def startEdit() = {
 
     if (isEditable && getTableView.isEditable && getTableColumn.isEditable) {
 
@@ -47,13 +47,13 @@ trait DatePickerTableCell[S] extends TableCell[S, Option[LocalDate]] { cell =>
     }
   }
 
-  override def cancelEdit() {
+  override def cancelEdit() = {
     super.cancelEdit()
     setText(getItem map formatter.format getOrElse "")
     setGraphic(null)
   }
 
-  override def updateItem(item: Option[LocalDate], empty: Boolean) {
+  override def updateItem(item: Option[LocalDate], empty: Boolean) = {
     super.updateItem(item, empty)
     if (!empty) {
       if (isEditing) {

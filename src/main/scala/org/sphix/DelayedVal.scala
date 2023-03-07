@@ -26,7 +26,7 @@ class DelayedVal[A](source: Val[A], delayTime0: Long, timeUnit: TimeUnit) extend
   var future: Option[Future[_]] = None
 
   val invalidator = new Runnable {
-    def run() {
+    def run() = {
       runLater {
         invalidate(source)
       }
@@ -39,9 +39,9 @@ class DelayedVal[A](source: Val[A], delayTime0: Long, timeUnit: TimeUnit) extend
   }
 
   //	so that we can override it in tests
-  def runLater[U](r: => U) {
+  def runLater[U](r: => U) = {
     Platform runLater new Runnable {
-      def run() { r }
+      def run() = { r }
     }
   }
 }

@@ -26,7 +26,7 @@ trait Cell[T] extends javafx.scene.control.Cell[T] {
 
   def onUpdate(item: T): Unit = {}
 
-  override def updateItem(item: T, empty: Boolean) {
+  override def updateItem(item: T, empty: Boolean) = {
     super.updateItem(item, empty)
     if (!empty) onUpdate(item)
     else {
@@ -99,7 +99,7 @@ trait ImageCell[T] extends AlignedCell[T] {
 
   def pos(item: T) = Pos.CENTER
 
-  override def onUpdate(item: T) {
+  override def onUpdate(item: T) = {
     super.onUpdate(item)
     image(item) match {
       case Some(img) =>
@@ -151,7 +151,7 @@ trait TooltipCell[T] extends Cell[T] {
   lazy val tooltip = new Tooltip
 //  lazy val label = new Label
 
-  override def onUpdate(item: T) {
+  override def onUpdate(item: T) = {
     super.onUpdate(item)
 //    label setText (text(item) replaceAll ("[\n\r]", " "))
 //    setGraphic(label)

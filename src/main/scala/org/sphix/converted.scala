@@ -13,12 +13,12 @@ class ConvertedVar[A, B](remote: jfxbp.Property[B], converter: FullConverter[B, 
 
   remote addListener lazyListener
 
-  override def invalidate(o: javafx.beans.Observable) {
+  override def invalidate(o: javafx.beans.Observable) = {
     super.invalidate(o)
     if (o != remote) remote setValue (converter deconvert compute)
   }
 
-  protected def write(a: A) {
+  protected def write(a: A) = {
     if (a != value) {
       val oldValue = value
       value = a
@@ -33,7 +33,7 @@ class ConvertedVar[A, B](remote: jfxbp.Property[B], converter: FullConverter[B, 
     }
   }
 
-  def setValue(newValue: A) {
+  def setValue(newValue: A) = {
     if (!isBound) write(newValue)
     else throw new RuntimeException("A bound value cannot be set.")
   }
@@ -42,14 +42,14 @@ class ConvertedVar[A, B](remote: jfxbp.Property[B], converter: FullConverter[B, 
 
   def isBound = boundTo.isDefined
 
-  def bind(that: jfxbv.ObservableValue[_ <: A]) {
+  def bind(that: jfxbv.ObservableValue[_ <: A]) = {
     if (isBound) unbind()
     boundTo = Some(that)
     that addListener lazyListener
     invalidate(that)
   }
 
-  def unbind() {
+  def unbind() = {
     boundTo map { ov => ov removeListener lazyListener }
     boundTo = None
   }
@@ -61,7 +61,7 @@ class ConvertedVar[A, B](remote: jfxbp.Property[B], converter: FullConverter[B, 
   }
 
   protected lazy val bidirListener = new ChangeListener[A] {
-    def changed(ov: jfxbv.ObservableValue[_ <: A], oldVal: A, newVal: A) {
+    def changed(ov: jfxbv.ObservableValue[_ <: A], oldVal: A, newVal: A) = {
       setValue(newVal)
     }
   }

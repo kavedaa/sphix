@@ -36,7 +36,7 @@ class ObservableBuffer[A](protected val observableList: ObservableList[A])
     observableList.add(i, elem)
   }
 
-  def insertAll(n: Int, elems: IterableOnce[A]) {
+  def insertAll(n: Int, elems: IterableOnce[A]) = {
     observableList.addAll(n, elems.toIterable.asJavaCollection)
   }
 
@@ -51,7 +51,7 @@ class ObservableBuffer[A](protected val observableList: ObservableList[A])
     observableList remove n
   }
 
-  def remove(n: Int, count: Int) {
+  def remove(n: Int, count: Int) = {
     observableList.subList (n, n + count).clear()
   }
 
@@ -127,5 +127,5 @@ object ObservableBuffer extends SeqFactory[ObservableBuffer] {
     new ObservableBuffer[A](FXCollections.observableArrayList[A](callback))
   }
 
-  implicit def fromObservableList[A](ol: ObservableList[A]) = new ObservableBuffer(ol)
+  implicit def fromObservableList[A](ol: ObservableList[A]): ObservableBuffer[A] = new ObservableBuffer(ol)
 }

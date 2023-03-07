@@ -7,7 +7,7 @@ import javafx.beans.value.{ ObservableValue => OV }
 
 trait Observer {
 
-  def dispose()
+  def dispose(): Unit
 
   protected var isIgnoring = false
 
@@ -38,7 +38,7 @@ class InvalidationObserver[U](observables: Seq[jfxb.Observable], f: jfxb.Observa
 abstract class ChangeObserverLike[A](observableValues: Seq[OV[A]])
   extends ChangeListener[A] with Observer {
 
-  def dispose() {
+  def dispose() = {
     observableValues foreach { _ removeListener this }
   }
 }

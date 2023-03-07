@@ -18,7 +18,7 @@ abstract class Val[A] extends Observable with OV[A] { v =>
 
   def onChangeOnce[U](f: (OV[_ <: A], A, A) => U): Observer = {
     val observer = new ChangeObserverLike[A](Seq(this)) {
-      def changed(ov: OV[_ <: A], oldValue: A, newValue: A) {
+      def changed(ov: OV[_ <: A], oldValue: A, newValue: A) = {
         f(ov, oldValue, newValue)
         removeListener(this)
       }
@@ -64,11 +64,11 @@ trait ValImpl[A] extends ObservableImpl {
 
   protected lazy val changeListeners = ListBuffer[ChangeListener[_ >: A]]()
 
-  def addListener(listener: ChangeListener[_ >: A]) {
+  def addListener(listener: ChangeListener[_ >: A]): Unit = {
     changeListeners += listener
   }
 
-  def removeListener(listener: ChangeListener[_ >: A]) {
+  def removeListener(listener: ChangeListener[_ >: A]): Unit = {
     changeListeners -= listener
   }
 }
@@ -76,8 +76,8 @@ trait ValImpl[A] extends ObservableImpl {
 trait ValProxy[A] extends Val[A] with ObservableProxy {
   val jfx: OV[A]
   def getValue = jfx.getValue
-  def addListener(listener: ChangeListener[_ >: A]) { jfx addListener listener }
-  def removeListener(listener: ChangeListener[_ >: A]) { jfx removeListener listener }
+  def addListener(listener: ChangeListener[_ >: A]) = { jfx addListener listener }
+  def removeListener(listener: ChangeListener[_ >: A]) = { jfx removeListener listener }
 
 }
 

@@ -17,7 +17,7 @@ abstract class SeqFunc[A](dependencies: jfxb.Observable*) extends ObservableSeq[
   def reEvaluate() = { observableList setAll compute.asJavaCollection }
 
   private val listener = new InvalidationListener {
-    def invalidated(o: jfxb.Observable) {
+    def invalidated(o: jfxb.Observable) = {
       reEvaluate()
     }
   }

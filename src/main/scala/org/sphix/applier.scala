@@ -9,7 +9,7 @@ trait Applier[A, O <: JFXO, B] {
 
 object Applier {
   
-  implicit def defaultApplier[A, O <: JFXO] = new Applier[A, O, Val[A]] {
+  implicit def defaultApplier[A, O <: JFXO]: Applier[A, O, Val[A]] = new Applier[A, O, Val[A]] {
     def apply(o: O, f: O => A) = new Func[A](o) {
       def compute = f(o)
     }
@@ -29,7 +29,7 @@ trait Applier2[A, O1 <: JFXO, O2 <: JFXO, B] {
 
 object Applier2 {
   
-  implicit def defaultApplier[A, O1 <: JFXO, O2 <: JFXO] = new Applier2[A, O1, O2, Val[A]] {
+  implicit def defaultApplier[A, O1 <: JFXO, O2 <: JFXO]: Applier2[A, O1, O2, Val[A]] = new Applier2[A, O1, O2, Val[A]] {
     def apply(t: (O1, O2), f: (O1, O2) => A) = new Func[A](t._1, t._2) {
       def compute = f(t._1, t._2)
     }
