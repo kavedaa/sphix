@@ -2,11 +2,11 @@ name := "sphix"
 
 organization := "org.sphix"
 
-version := "0.3.1"
+version := "0.3.2"
 
-scalaVersion := "3.3.0-RC1"
+scalaVersion := "3.2.2"
 
-crossScalaVersions := Seq("2.13.10", "3.2.1")
+crossScalaVersions := Seq("2.13.10", "3.2.2")
 
 resolvers += "My Maven Repo Resolver" at "https://mymavenrepo.com/repo/pINely5F8nmLUayJnPul/"
 
