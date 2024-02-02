@@ -8,13 +8,11 @@ scalaVersion := "3.2.2"
 
 crossScalaVersions := Seq("2.13.10", "3.2.2")
 
-resolvers += "My Maven Repo Resolver" at "https://mymavenrepo.com/repo/pINely5F8nmLUayJnPul/"
-
 libraryDependencies += "org.controlsfx" % "controlsfx" % "8.40.18"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % "test"
 
 scalacOptions in (Compile,doc) ++= Seq("-diagrams")
 
-publishTo := Some("My Maven Repo Publisher" at "https://mymavenrepo.com/repo/j1YxfckeUitD5ZGTAisl")
+publishTo := Some("Vedaa Data Public publisher" at "https://mymavenrepo.com/repo/zPAvi2SoOMk6Bj2jtxNA/")
 
